@@ -4,30 +4,31 @@
 ;; Description: Extensions to `info.el'.
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams (concat "drew.adams" "@" "oracle" ".com")
-;; Copyright (C) 1996-2017, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2020, Drew Adams, all rights reserved.
 ;; Created: Tue Sep 12 16:30:11 1995
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Sat Sep 23 19:28:50 2017 (-0700)
+;; Last-Updated: Sat Sep 26 12:02:22 2020 (-0700)
 ;;           By: dradams
-;;     Update #: 6259
+;;     Update #: 6505
 ;; URL: https://www.emacswiki.org/emacs/download/info%2b.el
 ;; Doc URL: https://www.emacswiki.org/emacs/InfoPlus
 ;; Keywords: help, docs, internal
-;; Compatibility: GNU Emacs: 23.x, 24.x, 25.x
+;; Compatibility: GNU Emacs: 23.x, 24.x, 25.x, 26.x
 ;;
 ;; Features that might be required by this library:
 ;;
 ;;   `apropos', `apropos+', `avoid', `backquote', `bookmark',
 ;;   `bookmark+', `bookmark+-1', `bookmark+-bmu', `bookmark+-key',
-;;   `bookmark+-lit', `button', `cl', `cmds-menu', `col-highlight',
-;;   `crosshairs', `fit-frame', `font-lock', `font-lock+',
-;;   `frame-fns', `help+', `help-fns', `help-fns+', `help-macro',
-;;   `help-macro+', `help-mode', `hl-line', `hl-line+', `info',
-;;   `info+', `kmacro', `menu-bar', `menu-bar+', `misc-cmds',
-;;   `misc-fns', `naked', `pp', `pp+', `second-sel', `strings',
-;;   `syntax', `thingatpt', `thingatpt+', `view', `vline',
-;;   `w32browser-dlgopen', `wid-edit', `wid-edit+'.
+;;   `bookmark+-lit', `button', `bytecomp', `cconv', `cl', `cl-lib',
+;;   `cmds-menu', `col-highlight', `crosshairs', `fit-frame',
+;;   `font-lock', `font-lock+', `frame-fns', `gv', `help+',
+;;   `help-fns', `help-fns+', `help-macro', `help-macro+',
+;;   `help-mode', `hl-line', `hl-line+', `info', `info+', `kmacro',
+;;   `macroexp', `menu-bar', `menu-bar+', `misc-cmds', `misc-fns',
+;;   `naked', `pp', `pp+', `radix-tree', `replace', `second-sel',
+;;   `strings', `syntax', `text-mode', `thingatpt', `thingatpt+',
+;;   `vline', `w32browser-dlgopen', `wid-edit', `wid-edit+'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -39,7 +40,7 @@
 ;;
 ;;  If you use Emacs 20, 21, or 22 then use library `info+20.el'
 ;;  instead of `info+.el'.
- 
+
 ;;(@> "Index")
 ;;
 ;;  Index
@@ -50,7 +51,7 @@
 ;;  of this doc.  Linkd mode will highlight this Index, as well as the
 ;;  cross-references and section headings throughout this file.  You
 ;;  can get `linkd.el' here:
-;;  http://www.emacswiki.org/emacs/download/linkd.el.
+;;  https://www.emacswiki.org/emacs/download/linkd.el.
 ;;
 ;;  (@> "Things Defined Here")
 ;;  (@> "Documentation")
@@ -61,7 +62,7 @@
 ;;  (@> "New Commands")
 ;;  (@> "Replacements for Existing Functions")
 ;;  (@> "Non-Interactive Functions")
- 
+
 ;;(@* "Things Defined Here")
 ;;
 ;;  Things Defined Here
@@ -74,11 +75,12 @@
 ;;    `Info-describe-bookmark' (Emacs 24.2+),
 ;;    `Info-follow-nearest-node-new-window', `Info-goto-node-web',
 ;;    `Info-history-clear', `Info-make-node-unvisited', `info-manual',
-;;    `Info-merge-subnodes',
+;;    `info-manual+node-buffer-name-mode', `Info-merge-subnodes',
 ;;    `Info-mouse-follow-nearest-node-new-window',
 ;;    `Info-outline-demote', `Info-outline-promote',
-;;    `Info-persist-history-mode' (Emacs 24.4+),
-;;    `Info-save-current-node', `Info-set-breadcrumbs-depth',
+;;    `Info-persist-history-mode' (Emacs 24.4+), `info-rename-buffer',
+;;    `Info-save-current-node', `Info-search-case-sensitively-next',
+;;    `Info-set-breadcrumbs-depth',
 ;;    `Info-set-face-for-bookmarked-xref' (Emacs 24.2+),
 ;;    `Info-toggle-breadcrumbs-in-header',
 ;;    `Info-toggle-fontify-angle-bracketed',
@@ -104,7 +106,8 @@
 ;;  Options (user variables) defined here:
 ;;
 ;;    `Info-bookmarked-node-xref-faces' (Emacs 24.2+),
-;;    `Info-breadcrumbs-in-header-flag',
+;;    `Info-bookmark-use-only-node-not-file-flag',
+;;    `Info-breadcrumbs-in-header-flag', `info-buffer-name-function',
 ;;    `Info-display-node-header-fn', `Info-emphasis-regexp',
 ;;    `Info-fit-frame-flag', `Info-fontify-angle-bracketed-flag',
 ;;    `Info-fontify-bookmarked-xrefs-flag' (Emacs 24.2+),
@@ -121,8 +124,10 @@
 ;;
 ;;  Non-interactive functions defined here:
 ;;
-;;    `Info-bookmark-for-node', `Info-bookmark-name-at-point',
-;;    `Info-bookmark-named-at-point', `Info-bookmark-name-for-node',
+;;    `Info--pop-to-buffer-same-window', `Info-bookmark-for-node',
+;;    `Info-bookmark-name-at-point', `Info-bookmark-named-at-point',
+;;    `Info-bookmark-name-for-node',
+;;    `info-buffer-name-function-default',
 ;;    `Info-display-node-default-header', `info-fontify-quotations',
 ;;    `info-fontify-reference-items',
 ;;    `Info-insert-breadcrumbs-in-mode-line', `Info-isearch-search-p',
@@ -149,6 +154,13 @@
 ;;  ***** NOTE: The following standard functions defined in `info.el'
 ;;              have been REDEFINED or ADVISED HERE:
 ;;
+;;  `info-apropos' - Apropos, not literal string, match by default.
+;;                   Use other window if not already in Info.
+;;  `Info-apropos-matches' - Added optional arg REGEXP-P.
+;;  `Info-backward-node' - Prefix arg clones buffer.
+;;  `Info-bookmark-jump' -
+;;     Respect option `Info-bookmark-use-only-node-not-file-flag'.
+;;  `Info-directory' - Prefix arg clones buffer.
 ;;  `info-display-manual' - Use completion to input manual name.
 ;;  `Info-find-emacs-command-nodes' - Added arg MSGP and message.
 ;;  `Info-find-file' - Handle virtual books.
@@ -163,8 +175,8 @@
 ;;     5. Only 5th and 9th menu items have their `*' colored.
 ;;     6. Notes in face `info-xref'.
 ;;     7. If `Info-fontify-emphasis-flag', then fontify _..._.
-;;     8. If `Info-fontify-quotations-flag', then fontify ‘...’ or
-;;        `...' in face `info-quoted-name', “...” in face
+;;     8. If `Info-fontify-quotations-flag', then fontify ‘...' or
+;;        `...' in face `info-quoted-name', "..." in face
 ;;        `info-double-quoted-name',  and "..." in face `info-string'.
 ;;     9. If `Info-fontify-angle-bracketed-flag' and
 ;;        `Info-fontify-quotations-flag' then fontify <...> in face
@@ -172,6 +184,7 @@
 ;;    10. If `Info-fontify-single-quote-flag' and
 ;;        `Info-fontify-quotations-flag', then fontify ' in face
 ;;        `info-single-quote'.
+;;  `Info-forward-node' - Prefix arg clones buffer.
 ;;  `Info-goto-emacs-command-node' -
 ;;     1. Uses `completing-read' in interactive spec, with,
 ;;        as default, `symbol-nearest-point'.
@@ -185,31 +198,36 @@
 ;;  `Info-goto-node' - Respect option
 ;;     `Info-node-access-invokes-bookmark-flag' (Emacs 24.4+).
 ;;  `Info-history' - A prefix arg clears the history.
+;;  `Info-history-back' - Prefix arg clones buffer.
+;;  `Info-history-forward' - Prefix arg clones buffer.
 ;;  `Info-insert-dir' -
 ;;     Added optional arg NOMSG to inhibit showing progress msgs.
+;;  `Info-isearch-search' - Respect restriction to active region.
+;;  `Info-isearch-wrap' - Respect restriction to active region.
 ;;  `Info-mode' - Doc string shows all bindings.
+;;  `Info-next' - Prefix arg clones buffer.
+;;  `Info-prev' - Prefix arg clones buffer.
 ;;  `Info-read-node-name'   - Added optional arg DEFAULT.
 ;;  `Info-search' - 1. Fits frame.
 ;;                  2. Highlights found regexp if `search-highlight'.
 ;;  `Info-set-mode-line' - Handles breadcrumbs in the mode line.
 ;;  `Info-mouse-follow-nearest-node' - With prefix arg, show node in
 ;;                                     a new Info buffer.
-;;  `Info-isearch-search' - Respect restriction to active region.
-;;  `Info-isearch-wrap' - Respect restriction to active region.
+;;  `Info-up' - Prefix arg clones buffer.
 ;;
 ;;
 ;;  ***** NOTE: The following standard function
 ;;              has been REDEFINED HERE:
 ;;
 ;;  `outline-invisible-p' - Fixes Emacs bug #28080.
- 
+
 ;;(@* "Documentation")
 ;;
 ;;  Documentation
 ;;  -------------
 ;;
 ;;  Library `info+.el' extends the standard Emacs library `info.el' in
-;;  several ways.  It provides:
+;;  several ways.  It provides these features:
 ;;
 ;;  * Association of additional information (metadata) with Info
 ;;    nodes.  You do this by bookmarking the nodes.  Library Bookmark+
@@ -242,6 +260,15 @@
 ;;      most important to you, or which are related to this or that
 ;;      general topic.
 ;;
+;;    - You can use command `Info-make-node-unvisited' to make a node
+;;      be considered unvisited.  By default the node at point is
+;;      used.  For a node that is not bookmarked this also gives links
+;;      to the node face `info-xref', which indicates that their
+;;      targets are unvisited.  If for some reason you want to make
+;;      links to a bookmarked node also have this face then just use
+;;      command `Info-set-face-for-bookmarked-xref', specifying face
+;;      `info-xref'.
+;;
 ;;    - If option `Info-node-access-invokes-bookmark-flag' is non-nil
 ;;      then going to a bookmarked Info node invokes its bookmark, so
 ;;      that the node metadata (such as number of visits) gets
@@ -267,23 +294,25 @@
 ;;    only once, not multiple times.  (This is controlled by option
 ;;    `Info-toc-outline-no-redundancy-flag'.)
 ;;
-;;    You can have any number of such TOCs, for the same manual or for
-;;    different manuals.
+;;    - You can have any number of such TOCs, for the same manual or
+;;      for different manuals.
 ;;
-;;    Outline minor mode lets you hide and show, and promote and
-;;    demote, various parts of the TOC tree for a manual.  And since
-;;    the TOC is editable you can make other changes to it: sort parts
-;;    of it, delete parts of it, duplicate parts of it, move parts
-;;    aroundin an ad hoc way, and so on.  Info+ makes the outlining
-;;    commands behave, so that hidden Info text (e.g. markup text such
-;;    as `*note'...`::' surrounding links) is kept hidden.
+;;    - Outline minor mode lets you hide and show, and promote and
+;;      demote, various parts of the TOC tree for a manual.  And since
+;;      the TOC is editable you can make other changes to it: sort
+;;      parts of it, delete parts of it, duplicate parts of it, move
+;;      parts aroundin an ad hoc way, and so on.  Info+ makes the
+;;      outlining commands behave, so that hidden Info text
+;;      (e.g. markup text such as `*note'...`::' surrounding links) is
+;;      kept hidden.
 ;;
-;;    Especially when combined with `Info-persist-history-mode',
-;;    command `Info-change-visited-status' (`C-x DEL', see below), and
-;;    the Info+ bookmarking enhancements (e.g., special link
-;;    highlighting and persistently tracking the number of visits per
-;;    node), `Info-toc-outline' gives you a way to organize access and
-;;    visibility of a manual's nodes, to reflect how you use it.
+;;    - Especially when combined with `Info-persist-history-mode',
+;;      command `Info-change-visited-status' (`C-x DEL', see below),
+;;      and the Info+ bookmarking enhancements (e.g., special link
+;;      highlighting and persistently tracking the number of visits
+;;      per node), `Info-toc-outline' gives you a way to organize
+;;      access and visibility of a manual's nodes, to reflect how you
+;;      use it.
 ;;
 ;;  * Additional, finer-grained Info highlighting.  This can make a
 ;;    big difference in readability.
@@ -313,23 +342,23 @@
 ;;      macros, special forms, syntax classes, user options, and other
 ;;      variables.
 ;;
-;;    Be aware that such highlighting is not 100% foolproof.
-;;    Especially for a manual such as Emacs or Elisp, where arbitrary
-;;    keys and characters can be present anywhere, the highlighting
-;;    can be thrown off.
+;;    - Be aware that such highlighting is not 100% foolproof.
+;;      Especially for a manual such as Emacs or Elisp, where
+;;      arbitrary keys and characters can be present anywhere, the
+;;      highlighting can be thrown off.
 ;;
-;;    You can toggle each of the `Info-fontify-*-flag' options from
-;;    the `Info' menu or using an `Info-toggle-fontify-*' command.
-;;    For example, command `Info-toggle-fontify-emphasis' toggles
-;;    option `Info-fontify-emphasis-flag'.
+;;    - You can toggle each of the `Info-fontify-*-flag' options from
+;;      the `Info' menu or using an `Info-toggle-fontify-*' command.
+;;      For example, command `Info-toggle-fontify-emphasis' toggles
+;;      option `Info-fontify-emphasis-flag'.
 ;;
-;;  * You can show breadcrumbs in the mode line or the header line, or
-;;    both. See where you are in the Info hierarchy, and access higher
-;;    nodes directly.
+;;  * Optionally showing breadcrumbs in the mode line or the header
+;;    line, or both. See where you are in the Info hierarchy, and
+;;    access higher nodes directly.
 ;;
 ;;    - In the mode line.  Turned on by default.
 ;;
-;;      See ‘Toggle Breadcrumbs’ in the `mouse-3' mode-line menu and
+;;      See ‘Toggle Breadcrumbs' in the `mouse-3' mode-line menu and
 ;;      `Toggle Breadcrumbs in Mode Line' in the `Info' menu (in the
 ;;      menu-bar or in the minor-mode indicator). You can customize
 ;;      option `Info-breadcrumbs-in-mode-line-mode' if you want to
@@ -343,9 +372,15 @@
 ;;      line, this can occasionally throw off the destination accuracy
 ;;      of cross references and searches slightly.
 ;;
-;;  * Some of the commands defined here:
+;;  * Optional automatic renaming of Info buffers to include the
+;;    manual (file) and node names, using minor mode
+;;    `info-manual+node-buffer-name-mode'.  You can use option
+;;    `info-buffer-name-function' to customize the format of the
+;;    buffer names.
 ;;
-;;    - `Info-virtual-book' (bound to `v') – Open a virtual Info
+;;  * Additional commands, including:
+;;
+;;    - `Info-virtual-book' (bound to `v') - Open a virtual Info
 ;;      manual of saved nodes from any number of manuals.  The nodes
 ;;      are those saved in option `Info-virtual-book'.  With `C-u',
 ;;      bookmarked Info nodes are also included.  (If you use Icicles,
@@ -371,11 +406,11 @@
 ;;      visited.  No prefix arg: toggle.  Non-negative prefix arg: set
 ;;      to visited.  Negative prefix arg: set to unvisited.
 ;;
-;;    - `Info-save-current-node' (bound to `.') – Save the name of the
+;;    - `Info-save-current-node' (bound to `.') - Save the name of the
 ;;      current node to list `Info-saved-nodes', for use by `v'
 ;;      (`Info-virtual-book').
 ;;
-;;    - `Info-merge-subnodes' – Integrate the current Info node with
+;;    - `Info-merge-subnodes' - Integrate the current Info node with
 ;;      its subnodes (the nodes in its Menu), perhaps recursively.
 ;;
 ;;      Use `Info-merge-subnodes' to extract a self-contained report
@@ -454,13 +489,51 @@
 ;;
 ;;; Change Log:
 ;;
+;; 2020/09/26 dadams
+;;     Info-goto-emacs-key-command-node: If this-file is nil then return nil.
+;; 2020/08/30 dadams
+;;     Added: Info-bookmark-use-only-node-not-file-flag, redefinition of Info-bookmark-jump (fixes Emacs
+;;            bug #42993), Info-search-case-sensitively-next.
+;;     Restructure Info menu (fixes Emacs bug #43115).
+;; 2020/05/20 dadams
+;;     Info-insert-dir: Removed use of Info-following-node-name.  Emacs Dev replaced it by its code.
+;; 2020/04/21 dadams
+;;     Added: info-buffer-name-function, info-buffer-name-function-default, info-rename-buffer,
+;;            info-manual+node-buffer-name-mode.
+;; 2019/05/31 dadams
+;;     Info-emphasis-regexp: Add another possible value to doc string.
+;; 2018/09/21 dadams
+;;     Added: Info--pop-to-buffer-same-window.
+;;     Info-find-node, Info-(next|prev|up), info-display-manual:
+;;       Use Info--pop-to-buffer-same-window, not switch-to-buffer.
+;; 2018/09/09 dadams
+;;     Added: redefinitions of Info-backward-node, Info-directory, Info-forward-node, Info-history-back,
+;;            Info-history-forward, Info-next, Info-prev, Info-up.
+;; 2018/06/14 dadams
+;;     Added: redefinitions of info-apropos, Info-apropos-matches.
+;;     bmkp-string-match-p - > string-match-p everywhere.
+;; 2018/06/03 dadams
+;;     info-quotation-regexp, info-quoted+<>-regexp:
+;;       Use shy groups everywhere.  [CHAR] -> CHAR, \\CHAR -> CHAR.  Added equivalent rx sexps.
+;;     info-fontify-reference-items, Info-node-name-at-point: [\n] -> \n.
+;; 2018/04/12 dadams
+;;     Info-read-node-name: Use Info-minibuffer-history, not Info-history, for completing-read.
+;;     Info-find-node(-2): Added arg STRICT-CASE, moving arg MSG to the end.
+;;     Info-find-node-2: Updated for Emacs 25+ - use filepos-to-bufferpos etc.
+;; 2017/11/17 dadams
+;;     Info-TOC-outline stuff needs Info-virtual-nodes.  Thx to Mike Fitzgerald.
+;;     http -> https everywhere.
+;; 2017/11/09 dadams
+;;     info-quotation-regexp, info-quoted+<>-regexp:
+;;       Added \\ to first alternative of each ... type, to exclude \ from it.
 ;; 2017/09/23 dadams
 ;;     Info-url-for-node: Fix per TeXInfo manual - encode embedded hyphens etc.
 ;; 2017/08/30 dadams
 ;;     Renamed: Info-refontify-toc-outline-region to Info-toc-outline-refontify-region.
 ;; 2017/08/28 dadams
 ;;     Added: Info-refontify-toc-outline-region.
-;;     Info-refontify-toc-outline-region: Add Info-refontify-toc-outline-region to post-command-hook and bind to C-x M-l.
+;;     Info-refontify-toc-outline-region:
+;;       Add Info-refontify-toc-outline-region to post-command-hook and bind to C-x M-l.
 ;;     Info-toc-outline: Turn off Info-breadcrumbs-in-mode-line-mode in TOC buffer.
 ;;     Info-change-visited-status: Typo: go-to-char.
 ;; 2017/08/25 dadams
@@ -477,7 +550,8 @@
 ;;       Reserve for Emacs 24.4+.
 ;; 2017/08/10 dadams
 ;;     Info-goto-node: Define it for Emacs 23 also.
-;;     Info-mode-menu: Add menu items for Info-toggle-node-access-invokes-bookmark, Info-toggle-fontify-bookmarked-xrefs.
+;;     Info-mode-menu:
+;;       Add menu items for Info-toggle-node-access-invokes-bookmark, Info-toggle-fontify-bookmarked-xrefs.
 ;; 2017/08/07 dadams
 ;;     Added: Info-make-node-unvisited.  Bound to C-x DEL.
 ;; 2017/08/06 dadams
@@ -516,7 +590,7 @@
 ;;     Added autoload cookies: Info-breadcrumbs-in-mode-line-mode, Info-set-breadcrumbs-depth,
 ;;           Info-search, Info-mouse-follow-nearest-node, info-display-manual.
 ;; 2017/01/09 dadams
-;;     Info-find-emacs-command-nodes: Updated for handle LINE-NUMBER (Emacs 24.5+).
+;;     Info-find-emacs-command-nodes: Updated to handle LINE-NUMBER (Emacs 24.5+).
 ;; 2016/12/13 dadams
 ;;     Removed obsolete face aliases: info-menu-5, Info-title-*-face.
 ;; 2016/12/11 dadams
@@ -536,9 +610,9 @@
 ;;     info-double-quoted-name: Changed default colors.
 ;; 2015/09/13 dadams
 ;;     Added face info-double-quoted-name.
-;;     info-quotation-regexp, info-quoted+<>-regexp: Added pattern for curly double-quotes (“...”).
+;;     info-quotation-regexp, info-quoted+<>-regexp: Added pattern for curly double-quotes ("...").
 ;;                                                   Use shy groups for all parts.
-;;     info-fontify-quotations: Fontify text between curly double-quotes (“...”).
+;;     info-fontify-quotations: Fontify text between curly double-quotes ("...").
 ;; 2015/03/19 dadams
 ;;     info-quoted+<>-regexp: Highlight <...> only if the first char is alphabetic.
 ;; 2015/03/06 dadams
@@ -557,7 +631,7 @@
 ;;     Info-merge-subnodes: with-current-buffer, not save-excursion + set-buffer.
 ;; 2014/05/04 dadams
 ;;     REMOVED SUPPORT for Emacs 20-22.  That support is offered by a new library now: info+20.el.
-;;     Added coding:utf-8 declaration.  Replace \x2018, \x2019 with literal ‘ and ’, since now Emacs 23+.
+;;     Added coding:utf-8 declaration.  Replace \x2018, \x2019 with literal ‘ and ', since now Emacs 23+.
 ;; 2014/05/03 dadams
 ;;     info-quotation-regexp, info-quoted+<>-regexp: Handle also curly single quotes (Emacs 24.4+).
 ;;                                                   Removed double * and moved openers outside \(...\) group.
@@ -926,6 +1000,7 @@
 (defvar Info-fontify-visited-nodes)
 (defvar Info-hide-note-references)
 (defvar Info-history-list)
+(defvar Info-history-skip-intermediate-nodes) ; Emacs 24+
 (defvar Info-isearch-initial-node)
 (defvar Info-isearch-search)
 (defvar Info-last-search)
@@ -960,7 +1035,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;
 
- 
+
 ;;(@* "Macros")
 ;;; Macros -----------------------------------------------------------
 
@@ -987,7 +1062,7 @@
 (define-key Info-mode-map [S-return]        'Info-follow-nearest-node-new-window)
 (define-key Info-mode-map [mouse-4]         'Info-history-back)
 (define-key Info-mode-map [mouse-5]         'Info-history-forward)
- 
+
 ;;(@* "Faces (Customizable)")
 ;;; Faces (Customizable) ---------------------------------------------
 
@@ -1001,18 +1076,18 @@ info+.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
 Don't forget to mention your Emacs and library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
-          "http://www.emacswiki.org/DrewsElispLibraries")
-  :link '(url-link :tag "Download" "http://www.emacswiki.org/info+.el")
-  :link '(url-link :tag "Description" "http://www.emacswiki.org/InfoPlus")
+          "https://www.emacswiki.org/emacs/DrewsElispLibraries")
+  :link '(url-link :tag "Download" "https://www.emacswiki.org/emacs/download/info%2b.el")
+  :link '(url-link :tag "Description" "https://www.emacswiki.org/emacs/InfoPlus")
   :link '(emacs-commentary-link :tag "Commentary" "info+")
   )
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `red3' for this face.
 ;;;###autoload
-(defface info-double-quoted-name        ; For “...”
+(defface info-double-quoted-name        ; For "..."
     '((((background dark)) (:inherit font-lock-string-face :foreground "Cyan"))
       (t (:inherit font-lock-string-face :foreground "DarkOrange")))
-  "*Face for names enclosed in curly double-quotes (“...”) in `info'."
+  "*Face for names enclosed in curly double-quotes ("...") in `info'."
   :group 'Info-Plus :group 'faces)
 
 ;;;###autoload
@@ -1035,11 +1110,11 @@ Don't forget to mention your Emacs and library versions."))
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `yellow' for this face.
 ;;;###autoload
-(defface info-quoted-name               ; For ‘...’ and `...'
+(defface info-quoted-name               ; For ‘...' and `...'
     '((((background dark)) (:inherit font-lock-string-face :foreground "#6B6BFFFF2C2C")) ; ~ bright green
       (((background light)) (:inherit font-lock-string-face :foreground "DarkViolet"))
       (t (:foreground "yellow")))
-  "*Face for quoted names (‘...’ or `...') in `info'."
+  "*Face for quoted names (‘...' or `...') in `info'."
   :group 'Info-Plus :group 'faces)
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `red3' for this face.
@@ -1155,14 +1230,51 @@ Don't forget to mention your Emacs and library versions."))
     :group 'Info-Plus :group 'faces)
 
   )
- 
+
 ;;(@* "User Options (Customizable)")
 ;;; User Options (Customizable) --------------------------------------
+
+;; This and the version of function `Info-bookmark-jump' defined here are also defined in `bookmark+-1.el',
+;; so that their feature is available if you use either `Info+' or `Bookmark+'.
+;;
+;;;###autoload
+(defcustom Info-bookmark-use-only-node-not-file-flag t
+  "Non-nil means an Info bookmark uses only the node name.
+The recorded Info file name is ignored.  This means use only manuals
+corresponding to the current Emacs session, regardless of the Emacs
+version or platform used to record the bookmark.
+
+A nil value means use the manuals whose absolute file names are
+recorded in the bookmarks.  (But if the file doesn't exist or is
+unreadable, then act as if the value is non-nil.)
+
+A non-nil value means you can use the same bookmark with different
+Emacs installations, including on different platforms.  A nil value
+means that you can use a bookmark to consult the Info manual for a
+different Emacs version from that of the current session."
+  :type 'boolean :group 'Info-Plus)
 
 ;;;###autoload
 (defcustom Info-breadcrumbs-in-header-flag nil
   "*Non-nil means breadcrumbs are shown in the header line."
   :type 'boolean :group 'Info-Plus)
+
+(defun info-buffer-name-function-default (file node)
+  "Default function value for `info-buffer-name-function'."
+  (format "*info* (%s) %s" file node))
+
+;;;###autoload
+(defcustom info-buffer-name-function 'info-buffer-name-function-default
+  "Function to name Info buffer, or nil to use default buffer naming.
+This is used by `info-manual+node-buffer-name-mode' and command
+`info-rename-buffer'.
+
+The function must accept the current Info file and node names as its
+first two args, in that order."
+  :type '(choice
+          (const    :tag "Use default Info buffer naming" nil)
+          (function :tag "Function accepting Info file and node names, returning string"))
+  :group 'Info-Plus)
 
 ;;;###autoload
 (defcustom Info-display-node-header-fn 'Info-display-node-default-header
@@ -1181,12 +1293,21 @@ generally has symbol syntax in Info.
 
 Some possible values include:
 
- _\\(\\(\\sw\\(\\s-\\|\\sw\\|\\s.\\)*\\)\\|\\(\\(\\s-\\|\\sw\\|\\s.\\)\\sw*\\)\\)_ (default)
- _\\(\\(\\s-\\|\\sw\\|\\s.\\)+\\)_ (word, punctuation, whitespace)
- _\\(\\sw+\\)_\t\t  (single words)
- _\\(\\s-*\\sw+\\s-*\\)_\t  (single words, maybe whitespace-separated)
- _\\([^_\\n]+\\)_\t\t  (anything except newlines)
- _\\([^_]+\\)_\t\t  (anything)
+_\\(\\(\\sw\\(\\s-\\|\\sw\\|\\s.\\)*\\)\\|\\(\\(\\s-\\|\\sw\\|\\s.\\)\\sw*\\)\\)_ (default)
+
+_\\(\\(\\sw\\(\\s-\\|\\sw\\|\\s.\\|\\s(\\|\\s)\\)*\\)\\|
+\\(\\(\\s-\\|\\sw\\|\\s.\\|\\s(\\|\\s)\\)\\sw*\\)\\)_ (but joined, with no newline)
+  (like default, but also open and close delimiters, such as ()[])
+
+_\\(\\(\\s-\\|\\sw\\|\\s.\\)+\\)_ (word, punctuation, whitespace)
+
+_\\(\\sw+\\)_\t\t  (single words)
+
+_\\(\\s-*\\sw+\\s-*\\)_\t  (single words, maybe whitespace-separated)
+
+_\\([^_\\n]+\\)_\t\t  (anything except newlines)
+
+_\\([^_]+\\)_\t\t  (anything)
 
 Note that any value can be problematic for some Info text - see
 `Info-fontify-emphasis-flag'."
@@ -1281,8 +1402,8 @@ way to turn off all matching of `Info-emphasis-regexp'."
 ;;;###autoload
 (defcustom Info-fontify-quotations-flag t
   "*Non-nil means `info' fontifies text between quotes.
-This applies to double-quoted text (“...” or \"...\") and text
-between single-quotes (‘...’ or `...').
+This applies to double-quoted text ("..." or \"...\") and text
+between single-quotes (‘...' or `...').
 
 Note: This fontification can never be 100% reliable.  It aims to be
 useful in most Info texts, but it can occasionally result in
@@ -1346,10 +1467,10 @@ For example, type `^Q^L^Q^J* ' to set this to \"\\f\\n* \"."
 ;;;###autoload
 (defcustom Info-toc-outline-no-redundancy-flag t
   "Non-nil means `Info-toc-outline' TOC has no redundancy.
-If nil then section headings from the TOC manual are included, and 
+If nil then section headings from the TOC manual are included, and
 nodes can be repeated because they are in more than one section."
   :type 'boolean :group 'Info-Plus)
- 
+
 
 ;;(@* "Internal Variables")
 ;;; Internal Variables -----------------------------------------------
@@ -1382,41 +1503,70 @@ If nil then emphasis is never fontified, regardless of that flag.")
 (defvar Info-breadcrumbs-depth-internal Info-breadcrumbs-depth
   "Current breadcrumbs depth for Info.")
 
-;; Match has, inside “...”, "...", ‘...’, or `...', zero or more of these characters:
-;;   - any character except ”, ", ’, or ', respectively
+;; Match has, inside "...", "...", ‘...', or `...', zero or more of these characters:
+;;   - any character except ", ", ', or ', respectively
 ;;   - \ followed by any character
 ;;
 ;; The `... in `...' is optional, so the regexp can also match just '.
 ;;
-;; The regexp matches also ‘...’, `...', “...”, and "..." where at least one of the
-;; ‘, ’, `, ', “, ”, or " is escaped by a backslash.
+;; The regexp matches also ‘...', `...', "...", and "..." where at least one of the
+;; ‘, ', `, ', ", ", or " is escaped by a backslash.
 ;; So we check those cases explicitly and do not highlight them.
 ;;
 (defvar info-quotation-regexp
   (concat
-   "\"\\(?:[^\"]\\|\\\\\\(?:.\\|[\n]\\)\\)*\"\\|" ; "..."
-   "`\\(?:[^']\\|\\\\\\(.\\|[\n]\\)\\)*'\\|"      ; `...'
-   "‘\\(?:[^’]\\|\\\\\\(.\\|[\n]\\)\\)*’\\|"      ; ‘...’
-   "\“\\(?:[^”]\\|\\\\\\(.\\|[\n]\\)\\)*”"        ; “...”
+   "\"\\(?:[^\"\\]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|" ; "..."
+   "`\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"      ; `...'
+   "‘\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"      ; ‘...'
+   ""\\(?:[^"]\\|\\\\\\(?:.\\|\n\\)\\)*""         ; "..."
    )
-  "Regexp to match `...', ‘...’, “...”, \"...\", or just '.
-If ... contains \" or ' then that character must be backslashed.")
+  "Regexp to match `...', ‘...', "...", \"...\", or just '.
+If ... contains an end char then that char must be backslashed.")
 
+;; (rx (or (seq ?\"
+;;              (zero-or-more (or (not (any ?\" ?\\))  (seq ?\\ anything)))
+;;              ?\")
+;;         (seq ?\`
+;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
+;;              ?\')
+;;         (seq ?‘
+;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
+;;              ?')
+;;         (seq ?"
+;;              (zero-or-more (or (not (any ?"))  (seq ?\\ anything)))
+;;              ?")))
 
 (defvar info-quoted+<>-regexp
   (concat
-   "\"\\(?:[^\"]\\|\\\\\\(?:.\\|[\n]\\)\\)*\"\\|"           ; "..."
-   "`\\(?:[^']\\|\\\\\\(.\\|[\n]\\)\\)*'\\|"                ; `...'
-   "‘\\(?:[^’]\\|\\\\\\(.\\|[\n]\\)\\)*’\\|"                ; ‘...’
-   "\“\\(?:[^”]\\|\\\\\\(.\\|[\n]\\)\\)*”\\|"               ; “...”
-   "<\\(?:[[:alpha:]][^>]*\\|\\(\\\\\\(.\\|[\n]\\)\\)*\\)>" ; <...>
+   "\"\\(?:[^\"\\]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|"             ; "..."
+   "`\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"                  ; `...'
+   "‘\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"                  ; ‘...'
+   ""\\(?:[^"]\\|\\\\\\(?:.\\|\n\\)\\)*"\\|"                  ; "..."
+   "<\\(?:[[:alpha:]][^>]*\\|\\(?:\\\\\\(?:.\\|\n\\)\\)*\\)>" ; <...>
    )
   "Same as `info-quotation-regexp', but matches also <...>.
-If ... contains > then that character must be backslashed.")
+If ... contains an end char then that char must be backslashed.")
+
+;; (rx (or (seq ?\"
+;;              (zero-or-more (or (not (any ?\" ?\\))  (seq ?\\ anything)))
+;;              ?\")
+;;         (seq ?\`
+;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
+;;              ?\')
+;;         (seq ?‘
+;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
+;;              ?')
+;;         (seq ?"
+;;              (zero-or-more (or (not (any ?"))  (seq ?\\ anything)))
+;;              ?")
+;;         (seq ?<
+;;              (or (seq (any alpha) (zero-or-more (not (any ?>))))
+;;                  (zero-or-more (seq ?\\ anything)))
+;;              ?>)))
 
 (defvar Info-toc-outline-map (let ((map  (make-sparse-keymap))) (set-keymap-parent map Info-mode-map))
   "Keymap for Info TOC with outlining.")
- 
+
 ;;(@* "New Commands")
 ;;; New Commands -----------------------------------------------------
 
@@ -1438,7 +1588,7 @@ If ... contains > then that character must be backslashed.")
   (interactive)
   (Info-follow-nearest-node t))
 
-;;;###autoload (autoload 'Info-clear "info+")
+;;;###autoload (autoload 'Info-history-clear "info+")
 (defun Info-history-clear (&optional msgp)
   "Clear Info history and reload current manual."
   (interactive (progn (unless (y-or-n-p "Clear the Info history? ") (info-user-error "OK, canceled"))
@@ -1532,9 +1682,10 @@ A negative prefix arg means consider the nodes not visited."
     (when (or (not file)  (string= file "")) (setq file  Info-current-file))
     (setq file               (Info-find-file file)
           Info-history-list  (remove (list file (substring-no-properties node)) Info-history-list))
-    ;; Emacs 23 has brain-dead `kill-buffer', which is invoked by `revert-buffer' and deletes the window/frame if dedicated.
+    ;; Emacs 23 has brain-dead `kill-buffer', which is invoked by `revert-buffer' and deletes
+    ;; the window/frame if dedicated.
     (when (and (> emacs-major-version 23)  (derived-mode-p 'Info-mode)) (revert-buffer nil t))
-    (when msgp (message "Node %sis now unvisited" 
+    (when msgp (message "Node %sis now unvisited"
                         (if (string= "dir" Info-current-file) ""
                           (format "`%s%s' "
                                   (if (equal file Info-current-file)
@@ -1588,6 +1739,30 @@ line from non-nil `Info-use-header-line'."
                           (if Info-node-access-invokes-bookmark-flag 'ON 'OFF)))))
 
   )
+
+;;;###autoload (autoload 'info-manual+node-buffer-name-mode "info+")
+(define-minor-mode info-manual+node-buffer-name-mode
+  "Name Info buffers using the Info manual (file) and node names."
+  :init-value nil :global t :group 'Info-Plus
+  (if (and info-buffer-name-function  info-manual+node-buffer-name-mode)
+      (add-hook 'Info-selection-hook #'info-rename-buffer)
+    (remove-hook 'Info-selection-hook #'info-rename-buffer)))
+
+;;;###autoload (autoload 'info-rename-buffer "info+")
+(defun info-rename-buffer (&optional msgp)
+  "Rename current Info buffer, per `info-buffer-name-function'.
+To do this automatically when you visit any Info buffer, use
+`info-manual+node-buffer-name-mode'."
+  (interactive "p")
+  (when info-buffer-name-function
+    (unless Info-current-file (error "This function must be invoked from Info"))
+    (let* ((manual    (file-name-sans-extension (file-name-nondirectory Info-current-file)))
+           (node      Info-current-node)
+           (bufname   (funcall info-buffer-name-function manual node)))
+      (unless (equal (buffer-name) bufname)
+        (rename-buffer bufname t)
+        (when msgp (message "Info buffer renamed to `%s'" bufname))))))
+
 
 (when (and (require 'bookmark+ nil t) ; Emacs 24.2+ (do not bother for prior)
            (or (> emacs-major-version 24)  (and (= emacs-major-version 24)  (> emacs-minor-version 1))))
@@ -1721,12 +1896,13 @@ NODE in MANUAL.
 Optional arg LOCALP means read a node name from the current manual."
     (let* ((completion-ignore-case  t)
            (bmks                    (remove-if-not
-                                     (lambda (bmk) (bmkp-string-match-p (if (and localp  Info-current-file)
-                                                                       (format "\\`(%s) "
-                                                                               (file-name-sans-extension
-                                                                                (file-name-nondirectory Info-current-file)))
-                                                                     "(\\([^)]+\\)) \\([^)]*\\)")
-                                                                   (bmkp-bookmark-name-from-record bmk)))
+                                     (lambda (bmk) (string-match-p
+                                               (if (and localp  Info-current-file)
+                                                   (format "\\`(%s) "
+                                                           (file-name-sans-extension
+                                                            (file-name-nondirectory Info-current-file)))
+                                                 "(\\([^)]+\\)) \\([^)]*\\)")
+                                               (bmkp-bookmark-name-from-record bmk)))
                                      (bmkp-info-alist-only)))
            (bmk                     (completing-read "Bookmarked node: " bmks nil t nil 'bmkp-info-history)))
       (while (equal bmk "") (setq bmk  (completing-read "Bookmarked node: " bmks nil t nil 'bmkp-info-history)))
@@ -1735,18 +1911,24 @@ Optional arg LOCALP means read a node name from the current manual."
   )
 
 
-;;; Support for TOC with Outline support
+;;; Support for TOC with Outline support ---------------------
 
+
+;; REPLACE ORIGINAL in `outline.el':
+;;
 ;; See Emacs bug #28080.
+;;
 (defun outline-invisible-p (&optional pos)
   "Non-nil if the character after point has been made invisible by Outline."
   (eq (get-char-property (or pos (point)) 'invisible) 'outline))
 
-(add-to-list 'Info-virtual-nodes '("\\`\\*TOC Outline\\* (.*)\\'" (find-node . Info-toc-outline-find-node)))
 
-;;;###autoload (autoload 'Info-toc-outline "info+")
-(defun Info-toc-outline (&optional arg)
-  "Go to a node with a table of contents (TOC) in `outline-minor-mode'.
+(when (boundp 'Info-virtual-nodes)      ; Emacs 23.4+
+
+  (add-to-list 'Info-virtual-nodes '("\\`\\*TOC Outline\\* (.*)\\'" (find-node . Info-toc-outline-find-node)))
+
+  (defun Info-toc-outline (&optional arg)
+    "Go to a node with a table of contents (TOC) in `outline-minor-mode'.
 The TOC is created from the tree structure of Info menus.
 
 In this node you can use the commands and menu items of
@@ -1769,104 +1951,102 @@ possible.
 
   Reuse the current Info buffer, going to a node `*TOC Outline*'
   for the current manual."
-  (interactive (list (if (consp current-prefix-arg) 'clone current-prefix-arg)))
-  (unless (derived-mode-p 'Info-mode)   (info-user-error "You must be in Info to use this command"))
-  (unless Info-current-node             (info-user-error "No current Info node"))
-  (unless Info-current-file             (info-user-error "No Info file"))
-  (when (equal Info-current-file "dir") (info-user-error "No TOC for Info Directory - choose a manual"))
-  (if (and (not arg)  (get-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file))))
-      (pop-to-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)))
-    (when (or (not arg)  (eq arg 'clone))
-      (clone-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)) t))
-    (Info-breadcrumbs-in-mode-line-mode -1)
-    (setq mark-ring  ()) ;`clone-buffer' causes this to be needed, if `*info*' buffer has no mark.
-    (Info-find-node Info-current-file (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)))
-    (let ((prev-node  (nth 1 (car Info-history)))
-          prev-posn)
-      (goto-char (point-min))
-      (when (setq prev-posn  (search-forward (concat "*Note " prev-node ":") nil t))
-        (setq prev-posn  (- prev-posn (length prev-node) 2)))
-      (goto-char (or prev-posn  (point-min))))))
+    (interactive (list (if (consp current-prefix-arg) 'clone current-prefix-arg)))
+    (unless (derived-mode-p 'Info-mode)   (info-user-error "You must be in Info to use this command"))
+    (unless Info-current-node             (info-user-error "No current Info node"))
+    (unless Info-current-file             (info-user-error "No Info file"))
+    (when (equal Info-current-file "dir") (info-user-error "No TOC for Info Directory - choose a manual"))
+    (if (and (not arg)  (get-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file))))
+        (pop-to-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)))
+      (when (or (not arg)  (eq arg 'clone))
+        (clone-buffer (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)) t))
+      (Info-breadcrumbs-in-mode-line-mode -1)
+      (setq mark-ring  ()) ;`clone-buffer' causes this to be needed, if `*info*' buffer has no mark.
+      (Info-find-node Info-current-file (format "*TOC Outline* (%s)" (file-name-nondirectory Info-current-file)))
+      (let ((prev-node  (nth 1 (car Info-history)))
+            prev-posn)
+        (goto-char (point-min))
+        (when (setq prev-posn  (search-forward (concat "*Note " prev-node ":") nil t))
+          (setq prev-posn  (- prev-posn (length prev-node) 2)))
+        (goto-char (or prev-posn  (point-min))))))
 
-;;;###autoload (autoload 'Info-toc-outline-find-node "info+")
-(defun Info-toc-outline-find-node (filename nodename &optional _no-going-back)
-  "TOC-specific implementation of `Info-find-node-2'."
-  (let* ((curr-file  (substring-no-properties (or filename Info-current-file)))
-	 (curr-node  (substring-no-properties (or nodename Info-current-node)))
-	 (node-list  (Info-toc-nodes curr-file)))
-    (insert (format "\n\^_\nFile: %s,  Node: %s,  Up: Top\n\n" curr-file curr-node))
-    (let ((title  (format "Contents (%s)" (file-name-nondirectory curr-file))))
-      (insert title "\n" (make-string (length title) ?*) "\n\n"))
-    (insert "*Note Top::\n")
-    (Info-toc-insert (nth 3 (assoc "Top" node-list)) node-list 0 curr-file) ; `Top' nodes
-    (unless (bobp)
-      (let ((Info-hide-note-references   'hide)
-	    (Info-fontify-visited-nodes  nil))
-	(setq Info-current-file  filename
-              Info-current-node  (format "*TOC Outline* (%s)" (file-name-nondirectory curr-file)))
-	(goto-char (point-min))
-	(narrow-to-region (or (re-search-forward "\n[\^_\f]\n" nil t)  (point-min)) (point-max))
-	(Info-fontify-node)
-	(widen))))
-  (set (make-local-variable 'inhibit-read-only) t)
-  (goto-char (point-min))
-  (search-forward "Contents" nil t)
-  (forward-line 3)
-  ;; If `Info-toc-outline-no-redundancy-flag' is non-nil then remove redundancies.  Else give non-links face `info-title-4'.
-  (save-excursion
-    (let ((note-re  "^[\t]*[*]Note "))
-      (while (not (eobp))
-        (if (re-search-forward note-re (line-end-position) t)
-            (if (and Info-toc-outline-no-redundancy-flag ; Remove node line if already listed.
-                     (let ((node  (buffer-substring-no-properties (point) (line-end-position))))
-                       (save-excursion (beginning-of-line) (re-search-backward (concat note-re node) nil t))))
+  (defun Info-toc-outline-find-node (filename nodename &optional _no-going-back)
+    "TOC-specific implementation of `Info-find-node-2'."
+    (let* ((curr-file  (substring-no-properties (or filename Info-current-file)))
+           (curr-node  (substring-no-properties (or nodename Info-current-node)))
+           (node-list  (Info-toc-nodes curr-file)))
+      (insert (format "\n\^_\nFile: %s,  Node: %s,  Up: Top\n\n" curr-file curr-node))
+      (let ((title  (format "Contents (%s)" (file-name-nondirectory curr-file))))
+        (insert title "\n" (make-string (length title) ?*) "\n\n"))
+      (insert "*Note Top::\n")
+      (Info-toc-insert (nth 3 (assoc "Top" node-list)) node-list 0 curr-file) ; `Top' nodes
+      (unless (bobp)
+        (let ((Info-hide-note-references   'hide)
+              (Info-fontify-visited-nodes  nil))
+          (setq Info-current-file  filename
+                Info-current-node  (format "*TOC Outline* (%s)" (file-name-nondirectory curr-file)))
+          (goto-char (point-min))
+          (narrow-to-region (or (re-search-forward "\n[\^_\f]\n" nil t)  (point-min)) (point-max))
+          (Info-fontify-node)
+          (widen))))
+    (set (make-local-variable 'inhibit-read-only) t)
+    (goto-char (point-min))
+    (search-forward "Contents" nil t)
+    (forward-line 3)
+    ;; If `Info-toc-outline-no-redundancy-flag' is non-nil then remove redundancies.
+    ;; Else give non-links face `info-title-4'.
+    (save-excursion
+      (let ((note-re  "^[\t]*[*]Note "))
+        (while (not (eobp))
+          (if (re-search-forward note-re (line-end-position) t)
+              (if (and Info-toc-outline-no-redundancy-flag ; Remove node line if already listed.
+                       (let ((node  (buffer-substring-no-properties (point) (line-end-position))))
+                         (save-excursion (beginning-of-line) (re-search-backward (concat note-re node) nil t))))
+                  (delete-region (line-beginning-position) (line-beginning-position 2))
+                (save-excursion ; Indent previous line to same column, if it was a heading.
+                  (let ((col  (current-column)))
+                    (forward-line -1)
+                    (unless (re-search-forward note-re (line-end-position) t)
+                      (insert (propertize " " 'display `(space :align-to ,col))))))
+                (forward-line 1))
+            (if Info-toc-outline-no-redundancy-flag
                 (delete-region (line-beginning-position) (line-beginning-position 2))
-              (save-excursion ; Indent previous line to same column, if it was a heading.
-                (let ((col  (current-column)))
-                  (forward-line -1)
-                  (unless (re-search-forward note-re (line-end-position) t)
-                    (insert (propertize " " 'display `(space :align-to ,col))))))
-              (forward-line 1))
-          (if Info-toc-outline-no-redundancy-flag
-              (delete-region (line-beginning-position) (line-beginning-position 2))
-            ;; The line is a section heading.  Put face `info-title-4' on it.
-            (put-text-property (line-beginning-position 1) (line-end-position 1) 'face 'info-title-4)
-            (unless (looking-at "\\s-") (insert "\n"))
-            (forward-line 1))))))
-  (outline-minor-mode 1)
-  (define-key Info-toc-outline-map [remap outline-promote] 'Info-outline-promote)
-  (define-key Info-toc-outline-map [remap outline-demote]  'Info-outline-demote)
-  (define-key Info-toc-outline-map "\C-x\M-l" 'Info-toc-outline-refontify-region)
-  (use-local-map Info-toc-outline-map)
-  (setq outline-regexp  "[\t]*[*]Note ") ; Include no "^" here.
-  (set (make-local-variable 'Info-hide-note-references) 'hide)
-  (add-hook 'post-command-hook 'Info-toc-outline-refontify-region nil 'LOCAL)
-  (buffer-enable-undo))
+              ;; The line is a section heading.  Put face `info-title-4' on it.
+              (put-text-property (line-beginning-position 1) (line-end-position 1) 'face 'info-title-4)
+              (unless (looking-at "\\s-") (insert "\n"))
+              (forward-line 1))))))
+    (outline-minor-mode 1)
+    (define-key Info-toc-outline-map [remap outline-promote] 'Info-outline-promote)
+    (define-key Info-toc-outline-map [remap outline-demote]  'Info-outline-demote)
+    (define-key Info-toc-outline-map "\C-x\M-l" 'Info-toc-outline-refontify-region)
+    (use-local-map Info-toc-outline-map)
+    (setq outline-regexp  "[\t]*[*]Note ") ; Include no "^" here.
+    (set (make-local-variable 'Info-hide-note-references) 'hide)
+    (add-hook 'post-command-hook 'Info-toc-outline-refontify-region nil 'LOCAL)
+    (buffer-enable-undo))
 
-;;;###autoload (autoload 'Info-toc-outline-refontify-region "info+")
-(defun Info-toc-outline-refontify-region (&optional start end forcep)
-  "In Info `*TOC Outline*' buffer, refontify region.
+  (defun Info-toc-outline-refontify-region (&optional start end forcep)
+    "In Info `*TOC Outline*' buffer, refontify region.
 Interactively, if region is not active or is empty, refontify buffer.
 From Lisp:
  * Do nothing if not in a `*TOC Outline* buffer or if buffer has not
    been modified.
  * START defaults to `point-min', END defaults to `point-max'."
-  (interactive (let* ((regionp  (use-region-p))
-                      (st       (if regionp (region-beginning) (point-min)))
-                      (en       (if regionp (region-end) (point-max))))
-                 (list st en t)))
-  (setq start  (or start  (point-min))
-        end    (or end    (point-max)))
-  (let ((buff  (buffer-name)))
-    (when (or forcep  (and buff
-                           (buffer-modified-p)
-                           (string-match-p "\\`\\*TOC Outline\\* ([^)]+)" buff)
-                           (derived-mode-p 'Info-mode)))
-      (Info-toc-outline-refontify-links start end))))
+    (interactive (let* ((regionp  (use-region-p))
+                        (st       (if regionp (region-beginning) (point-min)))
+                        (en       (if regionp (region-end) (point-max))))
+                   (list st en t)))
+    (setq start  (or start  (point-min))
+          end    (or end    (point-max)))
+    (let ((buff  (buffer-name)))
+      (when (or forcep  (and buff
+                             (buffer-modified-p)
+                             (string-match-p "\\`\\*TOC Outline\\* ([^)]+)" buff)
+                             (derived-mode-p 'Info-mode)))
+        (Info-toc-outline-refontify-links start end))))
 
-;;;###autoload (autoload 'Info-outline-promote "info+")
-(defun Info-outline-promote (&optional which)
-  "Promote headings higher up the tree.
+  (defun Info-outline-promote (&optional which)
+    "Promote headings higher up the tree.
 If `transient-mark-mode' is on and the mark is active, promote
 headings in the region (from a Lisp program, pass the symbol `region'
 for WHICH).
@@ -1878,39 +2058,41 @@ Otherwise:
 
 This is a version of `outline-promote' for use with Info.  It
 refontifies the buffer to hide the link prefix `*Note'."
-  (interactive (list (if (and transient-mark-mode  mark-active)
-                         'region
-                       (outline-back-to-heading)
-                       (and (not current-prefix-arg)  'subtree))))
-  (let (start end)
-    (cond ((eq which 'region)
-           (outline-map-region 'Info-outline-promote
-                               (setq start  (copy-marker (region-beginning)))
-                               (prog1 (region-end)
-                                 (setq end  (save-excursion (goto-char (region-end)) (copy-marker (line-end-position)))))))
-          (which
-           (outline-map-region 'Info-outline-promote
-                               (setq start  (copy-marker (point)))
-                               (save-excursion (outline-get-next-sibling) (setq end  (copy-marker (point))))))
-          (t
-           (outline-back-to-heading t)
-           (setq start  (copy-marker (point))
-                 end    (copy-marker (line-end-position)))
-           (let* ((head     (match-string-no-properties 0))
-                  (level    (save-match-data (funcall outline-level)))
-                  (up-head  (or (outline-head-from-level (1- level) head)
-                                (save-excursion ; Use the parent heading, if it is really one level less.
-                                  (save-match-data
-                                    (outline-up-heading 1 t)
-                                    (and (= (1- level)  (funcall outline-level))  (match-string-no-properties 0))))
-                                (error "Cannot promote - already at highest level"))))
-             (unless (rassoc level outline-heading-alist) (push (cons head level) outline-heading-alist))
-             (replace-match up-head nil t))))
-    (Info-toc-outline-refontify-links start end)))
+    (interactive (list (if (and transient-mark-mode  mark-active)
+                           'region
+                         (outline-back-to-heading)
+                         (and (not current-prefix-arg)  'subtree))))
+    (let (start end)
+      (cond ((eq which 'region)
+             (outline-map-region 'Info-outline-promote
+                                 (setq start  (copy-marker (region-beginning)))
+                                 (prog1 (region-end)
+                                   (setq end  (save-excursion
+                                                (goto-char (region-end))
+                                                (copy-marker (line-end-position)))))))
+            (which
+             (outline-map-region 'Info-outline-promote
+                                 (setq start  (copy-marker (point)))
+                                 (save-excursion (outline-get-next-sibling) (setq end  (copy-marker (point))))))
+            (t
+             (outline-back-to-heading t)
+             (setq start  (copy-marker (point))
+                   end    (copy-marker (line-end-position)))
+             (let* ((head     (match-string-no-properties 0))
+                    (level    (save-match-data (funcall outline-level)))
+                    (up-head  (or (outline-head-from-level (1- level) head)
+                                  (save-excursion ; Use the parent heading, if it is really one level less.
+                                    (save-match-data
+                                      (outline-up-heading 1 t)
+                                      (and (= (1- level)  (funcall outline-level))
+                                           (match-string-no-properties 0))))
+                                  (error "Cannot promote - already at highest level"))))
+               (unless (rassoc level outline-heading-alist) (push (cons head level) outline-heading-alist))
+               (replace-match up-head nil t))))
+      (Info-toc-outline-refontify-links start end)))
 
-;;;###autoload (autoload 'Info-outline-demote "info+")
-(defun Info-outline-demote (&optional which)
-  "Demote headings lower down the tree.
+  (defun Info-outline-demote (&optional which)
+    "Demote headings lower down the tree.
 If `transient-mark-mode' is on and the mark isactive, demote headings
 in the region (from a Lisp program, pass symbol `region' for WHICH).
 Otherwise:
@@ -1921,151 +2103,161 @@ Otherwise:
 
 This is a version of `outline-demote' for use with Info.  It
 refontifies the buffer to hide link prefix `*Note'."
-  (interactive (list (if (and transient-mark-mode  mark-active)
-                         'region
-                       (outline-back-to-heading)
-                       (and (not current-prefix-arg)  'subtree))))
-  (let (start end)
-    (cond ((eq which 'region)
-           (outline-map-region 'Info-outline-demote
-                               (setq start  (copy-marker (region-beginning)))
-                               (prog1 (region-end)
-                                 (setq end  (save-excursion (goto-char (region-end)) (copy-marker (line-end-position)))))))
-          (which
-           (outline-map-region 'Info-outline-demote
-                               (setq start  (copy-marker (point)))
-                               (save-excursion (outline-get-next-sibling) (setq end  (copy-marker (point))))))
-          (t
-           (setq start  (copy-marker (point))
-                 end    (copy-marker (line-end-position)))
-           (let* ((head       (match-string-no-properties 0))
-                  (level      (save-match-data (funcall outline-level)))
-                  (down-head  (or (outline-head-from-level (1+ level) head)
-                                  (save-excursion
-                                    (save-match-data
-                                      (while (and (progn (outline-next-heading) (not (eobp)))
-                                                  (<= (funcall outline-level) level)))
-                                      (when (eobp) ; Try again from beginning of buffer.
-                                        (goto-char (point-min))
+    (interactive (list (if (and transient-mark-mode  mark-active)
+                           'region
+                         (outline-back-to-heading)
+                         (and (not current-prefix-arg)  'subtree))))
+    (let (start end)
+      (cond ((eq which 'region)
+             (outline-map-region 'Info-outline-demote
+                                 (setq start  (copy-marker (region-beginning)))
+                                 (prog1 (region-end)
+                                   (setq end  (save-excursion
+                                                (goto-char (region-end))
+                                                (copy-marker (line-end-position)))))))
+            (which
+             (outline-map-region 'Info-outline-demote
+                                 (setq start  (copy-marker (point)))
+                                 (save-excursion (outline-get-next-sibling) (setq end  (copy-marker (point))))))
+            (t
+             (setq start  (copy-marker (point))
+                   end    (copy-marker (line-end-position)))
+             (let* ((head       (match-string-no-properties 0))
+                    (level      (save-match-data (funcall outline-level)))
+                    (down-head  (or (outline-head-from-level (1+ level) head)
+                                    (save-excursion
+                                      (save-match-data
                                         (while (and (progn (outline-next-heading) (not (eobp)))
-                                                    (<= (funcall outline-level) level))))
-                                      (unless (eobp)
-                                        (looking-at outline-regexp)
-                                        (match-string-no-properties 0))))
-                                  (error "Cannot demote - already at lowest level"))))
-             (unless (rassoc level outline-heading-alist) (push (cons head level) outline-heading-alist))
-             (replace-match down-head nil t))))
-    (Info-toc-outline-refontify-links start end)))
+                                                    (<= (funcall outline-level) level)))
+                                        (when (eobp) ; Try again from beginning of buffer.
+                                          (goto-char (point-min))
+                                          (while (and (progn (outline-next-heading) (not (eobp)))
+                                                      (<= (funcall outline-level) level))))
+                                        (unless (eobp)
+                                          (looking-at outline-regexp)
+                                          (match-string-no-properties 0))))
+                                    (error "Cannot demote - already at lowest level"))))
+               (unless (rassoc level outline-heading-alist) (push (cons head level) outline-heading-alist))
+               (replace-match down-head nil t))))
+      (Info-toc-outline-refontify-links start end)))
 
-(defun Info-toc-outline-refontify-links (begin end)
-  "Refontify TOC cross references between buffer positions BEGIN and END."
-  ;; (interactive "r") ; Not really intended as a command, but might be handy sometimes (?).
-  (save-excursion
-    (let* ((inhibit-read-only     t)
-           (case-fold-search      t)
-           (fontify-bookmarked-p  (and (boundp 'Info-fontify-bookmarked-xrefs-flag)  Info-fontify-bookmarked-xrefs-flag))
-           (node-not-too-large    (and (or fontify-bookmarked-p  Info-fontify-visited-nodes)
-                                       Info-fontify-maximum-menu-size
-                                       (or (eq t Info-fontify-maximum-menu-size)
-                                           (< (- (point-max) (point-min)) Info-fontify-maximum-menu-size))))
-           (fontify-bookmarked-p  (and node-not-too-large  fontify-bookmarked-p))
-           (fontify-visited-p     (and node-not-too-large  Info-fontify-visited-nodes))
-           paragraph-markers rbeg rend)
-      (goto-char begin)
-      (while (re-search-forward "\\(\\*Note[ \n\t]+\\)\\([^:]*\\)\\(:[ \t]*\\([^.,:(]*\\)\\(\\(([^)]\
+  (defun Info-toc-outline-refontify-links (begin end)
+    "Refontify TOC cross references between buffer positions BEGIN and END."
+    ;; (interactive "r") ; Not really intended as a command, but might be handy sometimes (?).
+    (save-excursion
+      (let* ((inhibit-read-only     t)
+             (case-fold-search      t)
+             (fontify-bookmarked-p  (and (boundp 'Info-fontify-bookmarked-xrefs-flag)
+                                         Info-fontify-bookmarked-xrefs-flag))
+             (node-not-too-large    (and (or fontify-bookmarked-p  Info-fontify-visited-nodes)
+                                         Info-fontify-maximum-menu-size
+                                         (or (eq t Info-fontify-maximum-menu-size)
+                                             (< (- (point-max) (point-min)) Info-fontify-maximum-menu-size))))
+             (fontify-bookmarked-p  (and node-not-too-large  fontify-bookmarked-p))
+             (fontify-visited-p     (and node-not-too-large  Info-fontify-visited-nodes))
+             paragraph-markers rbeg rend)
+        (goto-char begin)
+        (while (re-search-forward "\\(\\*Note[ \n\t]+\\)\\([^:]*\\)\\(:[ \t]*\\([^.,:(]*\\)\\(\\(([^)]\
 *)\\)[^.,:]*\\)?[,:]?\n?\\)" end t)
-        (let ((start  (match-beginning 0))
-              (next   (point))
-              other-tag)
-          (when Info-hide-note-references
-            (when (not (eq Info-hide-note-references 'hide)) ; *Note is often used where *note should have been.
-              (goto-char start)
-              (skip-syntax-backward " ")
-              (when (memq (char-before) '(?\( ?\[ ?\{))
-                (skip-syntax-backward " (")) ; Check whether the paren is preceded by an end of sentence.
-              (setq other-tag  (cond ((save-match-data (looking-back "\\<see")) "")
-                                     ((save-match-data (looking-back "\\<in")) "")
-                                     ((memq (char-before) '(nil ?\. ?! ??)) "See ")
-                                     ((save-match-data (save-excursion (search-forward "\n\n" start t))) "See ")
-                                     (t "see "))))
-            (goto-char next)
+          (let ((start  (match-beginning 0))
+                (next   (point))
+                other-tag)
+            (when Info-hide-note-references
+              (when (not (eq Info-hide-note-references 'hide)) ; *Note is often used where *note should have been.
+                (goto-char start)
+                (skip-syntax-backward " ")
+                (when (memq (char-before) '(?\( ?\[ ?\{))
+                  (skip-syntax-backward " (")) ; Check whether the paren is preceded by an end of sentence.
+                (setq other-tag  (cond ((save-match-data (looking-back "\\<see")) "")
+                                       ((save-match-data (looking-back "\\<in")) "")
+                                       ((memq (char-before) '(nil ?\. ?! ??)) "See ")
+                                       ((save-match-data (save-excursion (search-forward "\n\n" start t))) "See ")
+                                       (t "see "))))
+              (goto-char next)
+              (add-text-properties
+               (match-beginning 1)
+               (or (save-match-data (let ((start1  (match-beginning 1))) ; Don't hide \n after *Note
+                                      (and (string-match "\n" (match-string 1))  (+ start1 (match-beginning 0)))))
+                   (match-end 1))
+               (if other-tag
+                   `(display ,other-tag front-sticky nil rear-nonsticky t)
+                 '(invisible t front-sticky nil rear-nonsticky t))))
             (add-text-properties
-             (match-beginning 1)
-             (or (save-match-data (let ((start1  (match-beginning 1))) ; Don't hide \n after *Note
-                                    (and (string-match "\n" (match-string 1))  (+ start1 (match-beginning 0)))))
-                 (match-end 1))
-             (if other-tag
-                 `(display ,other-tag front-sticky nil rear-nonsticky t)
-               '(invisible t front-sticky nil rear-nonsticky t))))
-          (add-text-properties
-           (match-beginning 2) (match-end 2)
-           (list 'help-echo (if (or (match-end 5)  (not (equal (match-string 4) "")))
-                                (concat "mouse-2: go to " (or (match-string 5)  (match-string 4)))
-                              "mouse-2: go to this node")
-                 'mouse-face 'highlight))
-          (setq rbeg  (match-beginning 2)
-                rend  (match-end 2))
-          (let (node)
-            (put-text-property
-             rbeg
-             rend
-             'font-lock-face
-             (if (and (or Info-fontify-visited-nodes  fontify-bookmarked-p)
-                      (save-match-data
-                        (setq node  (replace-regexp-in-string
-                                     "^[ \t]+" ""
-                                     (replace-regexp-in-string
-                                      "[ \t\n]+" " "
-                                      (or (match-string-no-properties 5)
-                                          (and (not (equal (match-string 4) ""))  (match-string-no-properties 4))
-                                          (match-string-no-properties 2)))))
-                        (let* ((hl               Info-history-list)
-                               (external-link-p  (string-match "(\\([^)]+\\))\\([^)]*\\)" node))
-                               (file             (if external-link-p
-                                                     (file-name-nondirectory (match-string-no-properties 1 node))
-                                                   Info-current-file))
-                               res)
-                          (when external-link-p
-                            (setq node  (if (equal (match-string 2 node) "") "Top" (match-string-no-properties 2 node))))
-                          (or (and fontify-bookmarked-p  (Info-bookmark-name-for-node node))
-                              (progn
-                                (while hl
-                                  (if (and (string-equal node (nth 1 (car hl)))
-                                           (equal file (if (and external-link-p  (stringp (caar hl)))
-                                                           (file-name-nondirectory (caar hl))
-                                                         (caar hl))))
-                                      (setq res  (car hl)
-                                            hl   nil)
-                                    (setq hl  (cdr hl))))
-                                res)))))
-                 (let ((bmk  (and fontify-bookmarked-p  (Info-bookmark-for-node node 'LOCALP))))
-                   (if bmk
-                       (or (bmkp-get-tag-value bmk "bmkp-info-face")  'info-xref-bookmarked)
-                     'info-xref-visited))
-               'info-xref)))
-          (save-excursion ; For multiline ref, unfontify newline and surrounding whitespace
-            (goto-char rbeg)
-            (save-match-data (while (re-search-forward "\\s-*\n\\s-*" rend t nil)
-                               (remove-text-properties (match-beginning 0) (match-end 0) '(font-lock-face t)))))
-          (when (memq Info-hide-note-references '(t hide))
-            (add-text-properties (match-beginning 3) (match-end 3)
-                                 '(invisible t front-sticky nil rear-nonsticky t))
-            ;; Unhide the file name of the external reference in parens
-            (when (and (match-string 6)  (not (eq Info-hide-note-references 'hide)))
-              (remove-text-properties (match-beginning 6) (match-end 6) '(invisible t front-sticky nil rear-nonsticky t)))
-            (save-match-data ; Unhide newline because hidden newlines cause too long lines
-              (let ((beg3  (match-beginning 3))
-                    (end3  (match-end 3)))
-                (when (and (string-match "\n[ \t]*" (match-string 3))
-                           (not (save-match-data (save-excursion (goto-char (1+ end3)) (looking-at "[.)]*$")))))
-                  (remove-text-properties (+ beg3 (match-beginning 0)) (+ beg3 (match-end 0))
-                                          '(invisible t front-sticky nil rear-nonsticky t))))))
-          (when (and Info-refill-paragraphs  Info-hide-note-references)
-            (push (set-marker (make-marker) start) paragraph-markers)))))
-    (goto-char (point-max))
-    (skip-chars-backward "\n") ; Hide any empty lines at the end of the node.
-    (when (< (1+ (point)) (point-max)) (put-text-property (1+ (point)) (point-max) 'invisible t))
-    (set-buffer-modified-p nil)))
+             (match-beginning 2) (match-end 2)
+             (list 'help-echo (if (or (match-end 5)  (not (equal (match-string 4) "")))
+                                  (concat "mouse-2: go to " (or (match-string 5)  (match-string 4)))
+                                "mouse-2: go to this node")
+                   'mouse-face 'highlight))
+            (setq rbeg  (match-beginning 2)
+                  rend  (match-end 2))
+            (let (node)
+              (put-text-property
+               rbeg
+               rend
+               'font-lock-face
+               (if (and (or Info-fontify-visited-nodes  fontify-bookmarked-p)
+                        (save-match-data
+                          (setq node  (replace-regexp-in-string
+                                       "^[ \t]+" ""
+                                       (replace-regexp-in-string
+                                        "[ \t\n]+" " "
+                                        (or (match-string-no-properties 5)
+                                            (and (not (equal (match-string 4) ""))
+                                                 (match-string-no-properties 4))
+                                            (match-string-no-properties 2)))))
+                          (let* ((hl               Info-history-list)
+                                 (external-link-p  (string-match "(\\([^)]+\\))\\([^)]*\\)" node))
+                                 (file             (if external-link-p
+                                                       (file-name-nondirectory
+                                                        (match-string-no-properties 1 node))
+                                                     Info-current-file))
+                                 res)
+                            (when external-link-p
+                              (setq node  (if (equal (match-string 2 node) "")
+                                              "Top"
+                                            (match-string-no-properties 2 node))))
+                            (or (and fontify-bookmarked-p  (Info-bookmark-name-for-node node))
+                                (progn
+                                  (while hl
+                                    (if (and (string-equal node (nth 1 (car hl)))
+                                             (equal file (if (and external-link-p  (stringp (caar hl)))
+                                                             (file-name-nondirectory (caar hl))
+                                                           (caar hl))))
+                                        (setq res  (car hl)
+                                              hl   nil)
+                                      (setq hl  (cdr hl))))
+                                  res)))))
+                   (let ((bmk  (and fontify-bookmarked-p  (Info-bookmark-for-node node 'LOCALP))))
+                     (if bmk
+                         (or (bmkp-get-tag-value bmk "bmkp-info-face")  'info-xref-bookmarked)
+                       'info-xref-visited))
+                 'info-xref)))
+            (save-excursion ; For multiline ref, unfontify newline and surrounding whitespace
+              (goto-char rbeg)
+              (save-match-data (while (re-search-forward "\\s-*\n\\s-*" rend t nil)
+                                 (remove-text-properties (match-beginning 0) (match-end 0) '(font-lock-face t)))))
+            (when (memq Info-hide-note-references '(t hide))
+              (add-text-properties (match-beginning 3) (match-end 3)
+                                   '(invisible t front-sticky nil rear-nonsticky t))
+              ;; Unhide the file name of the external reference in parens
+              (when (and (match-string 6)  (not (eq Info-hide-note-references 'hide)))
+                (remove-text-properties (match-beginning 6) (match-end 6)
+                                        '(invisible t front-sticky nil rear-nonsticky t)))
+              (save-match-data ; Unhide newline because hidden newlines cause too long lines
+                (let ((beg3  (match-beginning 3))
+                      (end3  (match-end 3)))
+                  (when (and (string-match "\n[ \t]*" (match-string 3))
+                             (not (save-match-data (save-excursion (goto-char (1+ end3)) (looking-at "[.)]*$")))))
+                    (remove-text-properties (+ beg3 (match-beginning 0)) (+ beg3 (match-end 0))
+                                            '(invisible t front-sticky nil rear-nonsticky t))))))
+            (when (and Info-refill-paragraphs  Info-hide-note-references)
+              (push (set-marker (make-marker) start) paragraph-markers)))))
+      (goto-char (point-max))
+      (skip-chars-backward "\n") ; Hide any empty lines at the end of the node.
+      (when (< (1+ (point)) (point-max)) (put-text-property (1+ (point)) (point-max) 'invisible t))
+      (set-buffer-modified-p nil)))
+
+  )
 
 
 
@@ -2326,7 +2518,7 @@ argument says to include Info nodes recorded as bookmarks."
 (defun Info-goto-node-web (node &optional flip-new-win)
   "Use `browse-url' to go to Info node NODE using a Web browser.
 With a prefix arg, reverse the effect of option
-option`browse-url-new-window-flag'.
+`browse-url-new-window-flag'.
 
 NODE is the name of a node in the GNU Emacs or Elisp manual.
 Alternatively, NODE can have the form (MANUAL)NODE, where MANUAL is
@@ -2350,23 +2542,23 @@ manual.  Empty NODE in (MANUAL) defaults to the `Top' node."
 ;;    below.
 ;;
 ;; 3. Multiple consecutive space, tab and newline characters are
-;;    transformed into just one space. (It’s not possible to have
+;;    transformed into just one space. (It's not possible to have
 ;;    newlines in node names with the current implementation, but we
 ;;    specify it anyway, just in case.)
 ;;
 ;; 4. Leading and trailing spaces are removed.
 ;;
 ;; 5. After the above has been applied, each remaining space character is
-;;    converted into a ‘-’ character.
+;;    converted into a ‘-' character.
 ;;
-;; 6. Other ASCII 7-bit characters are transformed into ‘_00xx’, where xx
+;; 6. Other ASCII 7-bit characters are transformed into ‘_00xx', where xx
 ;;    is the ASCII character code in (lowercase) hexadecimal. This includes
-;;    ‘_’, which is mapped to ‘_005f’.
+;;    ‘_', which is mapped to ‘_005f'.
 ;;
 ;; 7. If the node name does not begin with a letter, the literal string
-;;    ‘g_t’ is prefixed to the result. (Due to the rules above, that
+;;    ‘g_t' is prefixed to the result. (Due to the rules above, that
 ;;    string can never occur otherwise; it is an arbitrary choice,
-;;    standing for “GNU Texinfo”.) This is necessary because XHTML
+;;    standing for "GNU Texinfo".) This is necessary because XHTML
 ;;    requires that identifiers begin with a letter.
 ;;
 ;;;###autoload (autoload 'Info-url-for-node "info+")
@@ -2380,7 +2572,7 @@ manual.  Empty NODE in (MANUAL) defaults to the `Top' node."
   (let (file url)
     (string-match "\\s *\\((\\s *\\([^\t)]*\\)\\s *)\\s *\\|\\)\\(.*\\)" node)
     (setq file  (if (= (match-beginning 1) (match-end 1)) "" (match-string 2 node))
-	  node  (match-string 3 node))
+          node  (match-string 3 node))
     (when (equal node "") (setq node  "index")) ; `Top' node.
     (let ((trim  (string-match "\\s +\\'" file)))
       (when trim (setq file (substring file 0 trim))))
@@ -2402,7 +2594,7 @@ manual.  Empty NODE in (MANUAL) defaults to the `Top' node."
                            ""))
     (setq node  (replace-regexp-in-string "[ \t]+" "-" node t t))
     (unless (string-match-p "[[:alpha:]]" node) (setq node  (concat "g_t" node)))
-    (setq url  (concat "http://www.gnu.org/software/emacs/manual/html_node/"
+    (setq url  (concat "https://www.gnu.org/software/emacs/manual/html_node/"
                        file "/" node ".html"))
     (message "URL: %s" url)
     url))
@@ -2419,7 +2611,7 @@ candidates."
     (info "emacs")))
 
 (global-set-key [remap info-emacs-manual] 'info-manual) ; `C-h r'
-    
+
 
 
 (easy-menu-define
@@ -2432,14 +2624,52 @@ candidates."
     ["Quit" quit-window t]))
 
 (easy-menu-define
-    Info-mode-menu Info-mode-map
+  Info-mode-menu Info-mode-map
   "Menu for Info files."
   '("Info"
+    ("Index"
+     ["Find with Index..." Info-index :help "Look for a string in the index"]
+     ["Find Again with Index" Info-index-next
+      :active Info-index-alternatives :help "Look for string again in index"]
+     ["Find In All Indexes..." info-apropos :help "Look for a string in the indexes of all manuals"]
+     ["Virtual Index..." Info-virtual-index
+      :visible (fboundp 'Info-virtual-index) :help "Open virtual index matching input pattern"])
+    ("Search"
+     ["Incrementally..." isearch-forward :help "Search incrementally (`C-r': backward)"]
+     ["Incrementally...(Regexp)" isearch-forward-regexp
+      :help "Search for regular expression incrementally (`C-M-r': backward)"]
+     ["Non-incrementally...(Regexp)" Info-search :help "Search nonincrementally for regular expression"]
+     ["  Again" Info-search-next :help "Search nonincrementally for another occurrence"]
+     ["Non-incrementally Case-Sensitively..." Info-search-case-sensitively
+      :help "Search nonincrementally and case sensitively for regular expression"]
+     ["  Again" Info-search-case-sensitively-next
+      :help "Search nonincrementally and case sensitively for another occurrence"])
+    ("History"
+     ["Back (History)" Info-history-back
+      :active Info-history :help "Go back in history to the last node you were at"]
+     ["Forward (History)" Info-history-forward :active Info-history-forward :help "Go forward in history"]
+     ["History List" Info-history :active Info-history-list :help "Go to menu of visited nodes"])
+    ("Navigation"
+     ("Menu Item" ["You should never see this" report-emacs-bug t])
+     ("Reference" ["You should never see this" report-emacs-bug t])
+     ["Top" Info-directory :help "Go to the list of manuals (Info top level)"]
+     ["Up" Info-up :active (Info-check-pointer "up") :help "Go up in the Info tree"]
+     ["Next" Info-next :active (Info-check-pointer "next") :help "Go to the next node"]
+     ["Previous" Info-prev :active (Info-check-pointer "prev[ious]*") :help "Go to the previous node"]
+     ["Go to Node..." Info-goto-node :help "Go to a named node"]
+     ["Go to Node on Web..." Info-goto-node-web :help "Go to a named node on the Web (HTML doc)"]
+
+     "--"
+     ["Forward" Info-forward-node :help "Go forward one node, considering all as a sequence"]
+     ["Backward" Info-backward-node :help "Go backward one node, considering all as a sequence"]
+     ["First in File" Info-top-node :help "Go to top node of file"]
+     ["Last in File" Info-final-node :help "Go to final node in this file"]
+     ["Beginning of This Node" beginning-of-buffer :help "Go to beginning of this node"])
     ("Toggle"
      ["Highlighting _..._ (emphasis)" Info-toggle-fontify-emphasis
       :visible info-fontify-emphasis :style toggle :selected Info-fontify-emphasis-flag
       :help "Toggle option `Info-fontify-emphasis-flag'"]
-     ["Highlighting ‘...’ or `...', and \"...\"" Info-toggle-fontify-quotations
+     ["Highlighting ‘...' or `...', and \"...\"" Info-toggle-fontify-quotations
       :style toggle :selected Info-fontify-quotations-flag :help "Toggle option `Info-fontify-quotations-flag'"]
      ["Highlighting <...>" Info-toggle-fontify-angle-bracketed
       :style toggle :selected Info-fontify-angle-bracketed-flag
@@ -2448,11 +2678,13 @@ candidates."
       :style toggle :selected Info-fontify-single-quote-flag
       :help "Toggle option `Info-fontify-single-quote-flag'"]
      ["Highlighting Bookmarked Links" Info-toggle-fontify-bookmarked-xrefs
-      :style toggle :selected (and (boundp 'Info-fontify-bookmarked-xrefs-flag)  Info-fontify-bookmarked-xrefs-flag)
+      :style toggle :selected (and (boundp 'Info-fontify-bookmarked-xrefs-flag)
+                                   Info-fontify-bookmarked-xrefs-flag)
       :visible (fboundp 'Info-toggle-fontify-bookmarked-xrefs)
       :help "Toggle option `Info-fontify-bookmarked-xrefs-flag'"]
      ["Bookmark Access On Visit" Info-toggle-node-access-invokes-bookmark
-      :style toggle :selected (and (boundp 'Info-node-access-invokes-bookmark-flag)  Info-node-access-invokes-bookmark-flag)
+      :style toggle :selected (and (boundp 'Info-node-access-invokes-bookmark-flag)
+                                   Info-node-access-invokes-bookmark-flag)
       :visible (fboundp 'Info-toggle-node-access-invokes-bookmark)
       :help "Toggle option `Info-node-access-invokes-bookmark-flag'"]
      ["Breadcrumbs in Mode Line" Info-breadcrumbs-in-mode-line-mode
@@ -2465,43 +2697,13 @@ candidates."
     ["Editable Outline TOC" Info-toc-outline :help "Go to editable table of contents with outline support"]
     ["Virtual Book" Info-virtual-book :help "Open table of contents of a virtual book" :active Info-saved-nodes]
     ["Save Current Node" Info-save-current-node :help "Save current node name for virtual book"]
-    ["Find...(Regexp)" Info-search :help "Search for regular expression in this Info file"]
-    ["Find Case-Sensitively..." Info-search-case-sensitively
-     :help "Search case sensitively for regular expression"]
-    ["Find Again" Info-search-next :help "Search for another occurrence of same regular expression"]
-    ("Index"
-     ["Find with Index..." Info-index :help "Look for a string in the index"]
-     ["Find Again with Index" Info-index-next
-      :active Info-index-alternatives :help "Look for string again in index"]
-     ["Find In All Indexes..." info-apropos :help "Look for a string in the indexes of all manuals"])
-    "--"
-    ["Back (History)" Info-history-back
-     :active Info-history :help "Go back in history to the last node you were at"]
-    ["Forward (History)" Info-history-forward :active Info-history-forward :help "Go forward in history"]
-    ["History List" Info-history :active Info-history-list :help "Go to menu of visited nodes"]
-    "--"
-    ["Top" Info-directory :help "Go to the list of manuals (Info top level)"]
-    ["Up" Info-up :active (Info-check-pointer "up") :help "Go up in the Info tree"]
-    ["Next" Info-next :active (Info-check-pointer "next") :help "Go to the next node"]
-    ["Previous" Info-prev :active (Info-check-pointer "prev[ious]*") :help "Go to the previous node"]
-    ("Menu Item" ["You should never see this" report-emacs-bug t])
-    ("Reference" ["You should never see this" report-emacs-bug t])
-    ["Go to Node on Web..." Info-goto-node-web :help "Go to a named node on the Web (HTML doc)"]
-    ["Go to Node..." Info-goto-node :help "Go to a named node"]
-   
-    "--"
-    ["Forward" Info-forward-node :help "Go forward one node, considering all as a sequence"]
-    ["Backward" Info-backward-node :help "Go backward one node, considering all as a sequence"]
-    ["First in File" Info-top-node :help "Go to top node of file"]
-    ["Last in File" Info-final-node :help "Go to final node in this file"]
-    ["Beginning of This Node" beginning-of-buffer :help "Go to beginning of this node"]
     "--"
     ["Clone Info Buffer" clone-buffer :help "Create a twin copy of the current Info buffer."]
     ["Copy Node Name" Info-copy-current-node-name :help "Copy the name of the current node into the kill ring"]
     ["Merge Subnodes" Info-merge-subnodes :help "Integrate current node with nodes referred to in its Menu"]
     "--"
     ["Quit Info" Info-exit :help "Exit from Info"]))
- 
+
 ;;(@* "Replacements for Existing Functions")
 ;;; Replacements for Existing Functions -------------------------------
 
@@ -2549,12 +2751,114 @@ form: `(MANUAL) NODE' (e.g.,`(emacs) Modes')."
 ;;
 (defun Info-read-node-name (prompt &optional default)
   (let* ((completion-ignore-case           t)
-	 (Info-read-node-completion-table  (Info-build-node-completions))
-	 (nodename                         (completing-read
-                                            prompt 'Info-read-node-name-1 nil t nil 'Info-history default)))
+         (Info-read-node-completion-table  (Info-build-node-completions))
+         (nodename                         (completing-read
+                                            prompt 'Info-read-node-name-1 nil t nil
+                                            'Info-minibuf-history default)))
     (if (equal nodename "")
-	(or default  (Info-read-node-name prompt))
+        (or default  (Info-read-node-name prompt))
       nodename)))
+
+
+;; REPLACE ORIGINAL in `info.el':
+;;
+;; Added optional arg LITERALP.  Use apropos matching, not literal-string matching, by default.
+;; Prefix arg matches literally.  Use other window, unless already in Info.
+;;
+(defun info-apropos (pattern &optional literalp)
+  "Search indexes of all known Info files on your system for apropos PATTERN.
+Build a menu of the possible matches.
+
+With a prefix arg, match PATTERN as a literal string, not as a regexp
+or keywords.
+
+Just as for commands such as `apropos', PATTERN can be a word, a list
+of words (separated by spaces), or a regexp (using some regexp special
+characters).  If it is a word, search for matches for that word as a
+substring.  If it is a list of words, search for matches for any
+two (or more) of those words."
+  (interactive (list (apropos-read-pattern "index entries") current-prefix-arg))
+  (apropos-parse-pattern pattern)
+  (if (equal apropos-regexp "")
+      (Info-find-node Info-apropos-file "Top")
+    (let ((nodes  Info-apropos-nodes)
+          nodename)
+      (while (and nodes  (not (string-match apropos-regexp (nth 1 (car nodes)))))
+        (setq nodes  (cdr nodes)))
+      ;; Use another window, if not already in Info.
+      (unless (eq major-mode 'Info-mode) (pop-to-buffer "*info*"))
+      (if nodes
+          (Info-find-node Info-apropos-file (caar nodes))
+        (setq nodename  (format "Index for ‘%s'" apropos-regexp))
+        (push (list nodename
+                    apropos-regexp
+                    (Info-apropos-matches apropos-regexp (and (not literalp) 'REGEXP)))
+              Info-apropos-nodes)
+        (Info-find-node Info-apropos-file nodename)))))
+
+
+;; REPLACE ORIGINAL in `info.el':
+;;
+;; Added optional arg REGEXP-P.
+;;
+(defun Info-apropos-matches (string &optional regexp-p)
+  "Collect STRING matches from all known Info files on your system.
+Return a list of matches where each element is in the format
+\((FILENAME INDEXTEXT NODENAME LINENUMBER)).
+
+Non-nil optional REGEXP-P means interpret STRING as a regexp, instead
+of trying to match it literally."
+  ;; Emacs 23 has an `interactive' spec here, for no reason.
+  (unless (string= string "")
+    (let ((pattern       (format "\n\\* +\\([^\n]*\\(%s\\)[^\n]*\\):[ \t]+\
+\\([^\n]+\\)\\.\\(?:[ \t\n]*(line +\\([0-9]+\\))\\)?"
+                                 (if regexp-p string (regexp-quote string))))
+          (ohist         Info-history)
+          (ohist-list    Info-history-list)
+          (current-node  Info-current-node)
+          (current-file  Info-current-file)
+          manuals matches node nodes)
+      (let ((Info-fontify-maximum-menu-size  nil))
+        (Info-directory)
+        ;; `current-node' and `current-file' are nil if you invoke `info-apropos' as the first Info command.
+        ;; (`info-apropos' loads `info.el'.)
+        ;; In that case, use `(DIR)Top', to avoid an error after search is complete.
+        (unless current-node (setq current-file  Info-current-file
+                                   current-node  Info-current-node))
+        (message "Searching indices...")
+        (goto-char (point-min))
+        (re-search-forward "\\* Menu: *\n" nil t)
+        (while (re-search-forward "\\*.*: *(\\([^)]+\\))" nil t)
+          (add-to-list 'manuals (match-string 1))) ; Ensure no duplicates in MANUALS, so the `dolist' runs faster.
+        (dolist (manual  (nreverse manuals))
+          (message "Searching %s" manual)
+          (condition-case err
+              (if (setq nodes  (Info-index-nodes (Info-find-file manual)))
+                  (save-excursion
+                    (Info-find-node manual (car nodes))
+                    (while
+                        (progn
+                          (goto-char (point-min))
+                          (while (re-search-forward pattern nil t)
+                            (let ((entry     (match-string-no-properties 1))
+                                  (nodename  (match-string-no-properties 3))
+                                  (line      (match-string-no-properties 4)))
+                              (add-text-properties
+                               (- (match-beginning 2) (match-beginning 1))
+                               (- (match-end 2) (match-beginning 1))
+                               '(face info-index-match) entry)
+                              (setq matches  (cons (list manual entry nodename line)
+                                                   matches))))
+                          (setq nodes  (cdr nodes)
+                                node   (car nodes)))
+                      (Info-goto-node node))))
+            (error (message "%s" (if (eq (car-safe err) 'error) (nth 1 err) err))
+                   (sit-for 1 t)))))
+      (Info-find-node current-file current-node)
+      (setq Info-history       ohist
+            Info-history-list  ohist-list)
+      (message "Searching indices...done")
+      (or (nreverse matches)  t))))
 
 
 ;; REPLACE ORIGINAL in `info.el':
@@ -2619,19 +2923,24 @@ just return nil (no error)."
 ;;
 ;; Added optional arg NOMSG.
 ;;
-(defun Info-find-node (filename nodename &optional no-going-back nomsg)
+(defun Info-find-node (filename nodename &optional no-going-back strict-case nomsg)
   "Go to an Info node specified as separate FILENAME and NODENAME.
 NO-GOING-BACK is non-nil if recovering from an error in this function;
-it says do not attempt further (recursive) error recovery."
+it says do not attempt further (recursive) error recovery.
+
+Look first for a case-sensitive match for NODENAME.  If none is found
+then try a case-insensitive match, unless STRICT-CASE is non-nil.
+
+Non-nil NOMSG means do not show a status message."
   (info-initialize)
   (setq filename  (Info-find-file filename))
   ;; Go into Info buffer.
-  (or (eq major-mode 'Info-mode)  (switch-to-buffer "*info*"))
+  (or (eq major-mode 'Info-mode)  (Info--pop-to-buffer-same-window "*info*"))
   ;; Record the node we are leaving, if we were in one.
   (and (not no-going-back)
        Info-current-file
        (push (list Info-current-file Info-current-node (point)) Info-history))
-  (Info-find-node-2 filename nodename no-going-back nomsg))
+  (Info-find-node-2 filename nodename no-going-back strict-case nomsg))
 
 
 ;; REPLACE ORIGINAL in `info.el':
@@ -2639,7 +2948,7 @@ it says do not attempt further (recursive) error recovery."
 ;; 1. Call `fit-frame' if `Info-fit-frame-flag'.
 ;; 2. Added optional arg NOMSG.
 ;;
-(defun Info-find-node-2 (filename nodename &optional no-going-back nomsg)
+(defun Info-find-node-2 (filename nodename &optional no-going-back strict-case nomsg)
   (buffer-disable-undo (current-buffer))
   (or (eq major-mode 'Info-mode)  (Info-mode))
   (widen)
@@ -2661,20 +2970,27 @@ it says do not attempt further (recursive) error recovery."
                   (set-marker Info-tag-table-marker nil)
                   (setq buffer-read-only  t)
                   (set-buffer-modified-p nil)
-                  (set (make-local-variable 'Info-current-node-virtual) t)))
+                  (if (> emacs-major-version 24)
+                      (setq Info-current-node-virtual  t)
+                    (set (make-local-variable 'Info-current-node-virtual) t))))
                ((not (and (or (not (boundp 'Info-current-node-virtual))  (not Info-current-node-virtual))
                           (or (null filename)  (equal Info-current-file filename))))
                 ;; Switch files if necessary
                 (let ((inhibit-read-only  t))
                   (when (and (boundp 'Info-current-node-virtual)  Info-current-node-virtual)
                     ;; When moving from a virtual node.
-                    (set (make-local-variable 'Info-current-node-virtual) nil)
+                    (if (> emacs-major-version 24)
+                        (setq Info-current-node-virtual  nil)
+                      (set (make-local-variable 'Info-current-node-virtual) nil))
                     (unless filename (setq filename  Info-current-file)))
                   (setq Info-current-file              nil
                         Info-current-subfile           nil
                         Info-current-file-completions  ()
                         buffer-file-name               nil)
                   (erase-buffer)
+                  ;; Erase any memory of the previous coding-system, so that `info-insert-file-contents' sets the
+                  ;; buffer's encoding to what the Info file specifies.
+                  (set-buffer-file-coding-system 'undecided t)
                   (cond ((eq filename t)        (Info-insert-dir nomsg))
                         ((eq filename 'apropos) (insert-buffer-substring " *info-apropos*"))
                         ((eq filename 'history) (insert-buffer-substring " *info-history*"))
@@ -2682,8 +2998,10 @@ it says do not attempt further (recursive) error recovery."
                         (t (info-insert-file-contents filename nil)
                            (setq default-directory  (file-name-directory filename))))
                   (set-buffer-modified-p nil)
-                  (set (make-local-variable 'Info-file-supports-index-cookies)
-                       (Info-file-supports-index-cookies filename))
+                  (if (> emacs-major-version 24)
+                      (setq Info-file-supports-index-cookies  (Info-file-supports-index-cookies filename))
+                    (set (make-local-variable 'Info-file-supports-index-cookies)
+                         (Info-file-supports-index-cookies filename)))
                   ;; See whether file has a tag table.  Record the location if yes.
                   (goto-char (point-max))
                   (forward-line -8)
@@ -2691,13 +3009,12 @@ it says do not attempt further (recursive) error recovery."
                   (if (not (or (string-equal nodename "*")
                                (not (search-forward "\^_\nEnd tag table\n" nil t))))
                       (let (pos)
-                        ;; We have a tag table.  Find its beginning.
-                        ;; Is this an indirect file?
+                        ;; We have a tag table.  Find its beginning.  Is this an indirect file?
                         (search-backward "\nTag table:\n")
                         (setq pos  (point))
                         (if (save-excursion (forward-line 2) (looking-at "(Indirect)\n"))
-                            ;; It is indirect.  Copy it to another buffer
-                            ;; and record that the tag table is in that buffer.
+                            ;; It is indirect.
+                            ;; Copy it to another buffer and record that the tag table is in that buffer.
                             (let ((buf     (current-buffer))
                                   (tagbuf  (or Info-tag-table-buffer
                                                (generate-new-buffer " *info tag table*"))))
@@ -2727,36 +3044,48 @@ it says do not attempt further (recursive) error recovery."
            ;;
            ;; Search file for a suitable node.
            (let ((guesspos  (point-min))
-                 (regexp    (concat "\\(Node:\\|Ref:\\) *\\("  (if (stringp nodename)
-                                                                   (regexp-quote nodename)
-                                                                 "")
+                 (regexp    (concat "\\(Node:\\|Ref:\\) *\\("  (if (stringp nodename) (regexp-quote nodename) "")
                                     "\\) *[,\t\n\177]")))
              (catch 'foo
                ;; First, search a tag table, if any
                (when (marker-position Info-tag-table-marker)
                  (let* ((m      Info-tag-table-marker)
-                        (found  (Info-find-in-tag-table m regexp)))
-                   (when found
-                     ;; FOUND is (ANCHOR POS MODE).
-                     (setq guesspos  (nth 1 found))
-                     ;; If this is an indirect file, determine which
-                     ;; file really holds this node and read it in.
-                     (unless (eq (nth 2 found) 'Info-mode)
-                       ;; Note that the current buffer must be the *info* buffer on entry to
-                       ;; `Info-read-subfile'.  Thus the hackery above.
-                       (setq guesspos  (Info-read-subfile guesspos)))
+                        (found  (if (or (> emacs-major-version 24) ; Emacs 24.4+
+                                        (and (= emacs-major-version 24)  (> emacs-minor-version 3)))
+                                    (Info-find-in-tag-table m regexp strict-case)
+                                  (Info-find-in-tag-table m regexp))))
+                   (when found          ; FOUND is (ANCHOR POS MODE)
+                     (let ((filepos  (nth 1 found))) ; File position in bytes.
+                       ;; If this is an indirect file, determine which file really holds this node and read it in.
+                       (unless (eq (nth 2 found) 'Info-mode)
+                         ;; The current buffer must be the *info* buffer on entry to `Info-read-subfile'.
+                         ;; Thus the hackery above.
+                         (setq filepos  (Info-read-subfile filepos)))
+                       (setq guesspos  (if (fboundp 'filepos-to-bufferpos)
+                                           (filepos-to-bufferpos filepos 'approximate)
+                                         filepos)))
                      (when (nth 0 found) ; Handle anchor
                        (goto-char (setq anchorpos  guesspos)) (throw 'foo t)))))
-               ;; Else we may have a node, which we search for:
-               (goto-char (max (point-min) (- (byte-to-position guesspos) 1000)))
-               ;; Now search from our advised position (or from beg of buffer) to find the actual
-               ;; node.  First, check whether the node is right where we are, in case the buffer
-               ;; begins with a node.
-               (let ((pos  (Info-find-node-in-buffer regexp)))
+               ;; Else we may have a node, which we search for.
+               (goto-char (max (point-min) (- (if (> emacs-major-version 24) guesspos (byte-to-position guesspos))
+                                              1000)))
+               ;; Now search from our advised position (or from beg of buffer) to find the actual node.
+               ;; First, check whether the node is right where we are, in case the buffer begins with a node.
+               (when (> emacs-major-version 24)
+                 (let ((pos  (Info-find-node-in-buffer regexp strict-case)))
+                   (when pos (goto-char pos) (throw 'foo t)))
+                 ;; If the Texinfo source had an @ifnottex block of text before the Top node,
+                 ;; makeinfo 5.0 and 5.1 mistakenly omitted that block's size from the starting
+                 ;; position of the 1st subfile, which makes GUESSPOS overshoot the correct
+                 ;; position by the length of that text.  So we try again with a larger slop.
+                 (goto-char (max (point-min) (- guesspos 10000))))
+               (let ((pos  (if (<= emacs-major-version 23)
+                               (Info-find-node-in-buffer regexp)
+                             (Info-find-node-in-buffer regexp strict-case))))
                  (when pos (goto-char pos) (throw 'foo t)))
                (when (string-match "\\([^.]+\\)\\." nodename)
                  (let (Info-point-loc)
-                   (Info-find-node-2 filename (match-string 1 nodename) no-going-back nomsg))
+                   (Info-find-node-2 filename (match-string 1 nodename) no-going-back strict-case nomsg))
                  (widen)
                  (throw 'foo t))
                ;; No such anchor in tag table or node in tag table or file
@@ -2789,9 +3118,9 @@ it says do not attempt further (recursive) error recovery."
       (if Info-history
           (let ((hist  (car Info-history)))
             (setq Info-history  (cdr Info-history))
-            (Info-find-node (nth 0 hist) (nth 1 hist) t nomsg)
+            (Info-find-node (nth 0 hist) (nth 1 hist) t t nomsg) ; Pass STRICT-CASE?  Emacs bug #31137.
             (goto-char (nth 2 hist)))
-        (Info-find-node Info-current-file "Top" t))))
+        (Info-find-node Info-current-file "Top" t t nomsg)))) ; Pass STRICT-CASE?  Emacs bug #31137.
   (Info-set-mode-line))
 
 
@@ -2840,7 +3169,7 @@ it says do not attempt further (recursive) error recovery."
                                         (file-attributes file))
                                  ;; Shouldn't really happen, but sometimes does, eg on Debian systems with
                                  ;; buggy packages; so may as well try it.
-                                 ;; http://lists.gnu.org/archive/html/emacs-devel/2012-03/msg00005.html
+                                 ;; https://lists.gnu.org/archive/html/emacs-devel/2012-03/msg00005.html
                                  (progn (setq file  (expand-file-name "dir.gz" truename))
                                         (file-attributes file)))))
                 (setq dirs-done  (cons truename (cons (directory-file-name truename) dirs-done)))
@@ -2877,7 +3206,7 @@ it says do not attempt further (recursive) error recovery."
                     nodename end)
                 (re-search-backward "^\^_")
                 (search-forward "Node: ")
-                (setq nodename  (Info-following-node-name))
+                (setq nodename  (and (looking-at (Info-following-node-name-re))  (match-string-no-properties 1)))
                 (search-forward "\n\^_" nil 'move)
                 (beginning-of-line)
                 (setq end  (point))
@@ -3181,6 +3510,7 @@ COMMAND must be a symbol or string."
 ;; 1. If key's command is not found, then `Info-search' for key sequence in text.
 ;; 2. Added optional arg MSGP (interactive-p).
 ;; 3. Message for repeating.
+;; 4. Return non-nil for found, nil for not found.
 ;;
 ;;;###autoload
 (defun Info-goto-emacs-key-command-node (key &optional msgp)
@@ -3221,8 +3551,9 @@ If key's command cannot be found by looking in indexes, then
                          (1- num-cmd-matches) (if (> num-cmd-matches 2) "ies" "y")
                          (if (> num-cmd-matches 2) "them" "it"))))
                     num-cmd-matches)  ; RETURN num-cmd-matches: found.
-                   (t ;; Couldn't find key's command via a manual index.
-                    ;; Get back to where we were.
+                   (this-file
+                    ;; Couldn't find key's command via a manual index.
+                    ;; Get back to where we were, if in Info.
                     ;; Would be better if there were a save-xxx-excursion-xxx
                     ;; that would work.
                     (Info-goto-node (concat "(" this-file ")" this-node))
@@ -3240,14 +3571,15 @@ If key's command cannot be found by looking in indexes, then
                                      pp-key))
                           t)            ; RETURN t: found.
                       (search-failed (when msgp (message "No documentation found for key `%s'." pp-key))
-                                     nil))))))))) ; RETURN nil: not found.
+                                     nil))) ; RETURN nil: not found.
+                   (t nil))))))) ; RETURN nil: not found.
 
 
 ;; REPLACES ORIGINAL in `info.el':
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
-;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
+;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -3346,7 +3678,7 @@ If key's command cannot be found by looking in indexes, then
                      (skip-chars-backward " \t,")
                      (put-text-property (point) header-end 'invisible t))))))
 
-        ;; Fontify ‘...’, `...', “...”, and "..."
+        ;; Fontify ‘...', `...', "...", and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -3620,8 +3952,8 @@ If key's command cannot be found by looking in indexes, then
 ;;
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
-;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
+;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -3721,7 +4053,7 @@ If key's command cannot be found by looking in indexes, then
                      (skip-chars-backward " \t,")
                      (put-text-property (point) header-end 'invisible t))))))
 
-        ;; Fontify ‘...’, `...', “...”, and "..."
+        ;; Fontify ‘...', `...', "...", and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -3977,8 +4309,8 @@ If key's command cannot be found by looking in indexes, then
 ;;
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
-;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
+;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -4085,7 +4417,7 @@ If key's command cannot be found by looking in indexes, then
                                             header-end t)
                          (put-text-property (match-beginning 1) (match-end 1) 'invisible t)))))))
 
-        ;; Fontify ‘...’, `...', “...”, and "..."
+        ;; Fontify ‘...', `...', "...", and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -4359,12 +4691,12 @@ You are prompted for the depth value."
   (when Info-breadcrumbs-in-mode-line-mode (Info-insert-breadcrumbs-in-mode-line)))
 
 (defun info-fontify-quotations ()
-  "Fontify ‘...’, `...', “...”, \"...\", and possibly <...> and single '.
+  "Fontify ‘...', `...', "...", \"...\", and possibly <...> and single '.
 If `Info-fontify-angle-bracketed-flag' then fontify <...> also.
 If `Info-fontify-single-quote-flag' then fontify singleton ' also.
 
- ‘...’, `...', and <...>\t- use face `info-quoted-name'.
- “...” uses face `info-double-quoted-name'.
+ ‘...', `...', and <...>\t- use face `info-quoted-name'.
+ "..." uses face `info-double-quoted-name'.
  \"...\"\t- uses face `info-string'.
  '\t- uses face `info-single-quote'."
   (let ((regexp    (if Info-fontify-angle-bracketed-flag info-quoted+<>-regexp info-quotation-regexp))
@@ -4376,11 +4708,11 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)))
             ((and (eq (aref (match-string 0) 0) ?‘) ; Single-quote wrapped backslashes:
-                  (goto-char (match-beginning 0)) ; ‘\’, ‘\\’, ‘\\\’, etc. 
-                  (save-match-data (looking-at "\\(‘\\\\+’\\)")))
+                  (goto-char (match-beginning 0)) ; ‘\', ‘\\', ‘\\\', etc.
+                  (save-match-data (looking-at "\\(‘\\\\+'\\)")))
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)))
-            ((and (memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...’, `...'
+            ((and (memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...', `...'
                   (goto-char (match-beginning 0)) ; If ` or ‘ is preceded by \, then skip it
                   (< (save-excursion (skip-chars-backward "\\\\")) 0))
              (goto-char (1+ (match-beginning 0))))
@@ -4389,14 +4721,14 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
                   (goto-char (match-beginning 0))
                   (< (save-excursion (skip-chars-backward "\\\\")) 0))
              (goto-char (1+ (match-beginning 0))))
-            ((memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...’, `...'
+            ((memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...', `...'
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
             ((and Info-fontify-angle-bracketed-flag
                   (eq ?< (aref (match-string 0) 0))) ; <...>
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
-            ((eq (aref (match-string 0) 0) ?“) ; “...”
+            ((eq (aref (match-string 0) 0) ?") ; "..."
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-double-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
             ;; Don't try to handle strings correctly.  Check only the first " for being escaped.
@@ -4410,7 +4742,7 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
                                 property 'info-single-quote)
              (goto-char (match-end 0)) (forward-char 1))
             ((and (not (string= "'" (buffer-substring (match-beginning 0) (match-end 0)))) ; "..."
-                  (not (string= "’" (buffer-substring (match-beginning 0) (match-end 0)))))
+                  (not (string= "'" (buffer-substring (match-beginning 0) (match-end 0)))))
              (put-text-property (match-beginning 0) (match-end 0) property 'info-string)
              (goto-char (match-end 0)) (forward-char 1))
             (t
@@ -4419,7 +4751,7 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
 (defun info-fontify-reference-items ()
   "Fontify reference items such as \"Function:\" in Info buffer."
   (while (re-search-forward "^ --? \\(Command:\\|Constant:\\|Function:\\|Macro:\\|Special Form:\\|\
-Syntax class:\\|User Option:\\|Variable:\\)\\(.*\\)\\([\n]          \\(.*\\)\\)*"
+Syntax class:\\|User Option:\\|Variable:\\)\\(.*\\)\\(\n          \\(.*\\)\\)*"
                             nil t)
     (let ((symb  (intern (match-string 1))))
       (put-text-property (match-beginning 1) (match-end 1)
@@ -4498,7 +4830,7 @@ Syntax class:\\|User Option:\\|Variable:\\)\\(.*\\)\\([\n]          \\(.*\\)\\)*
 (when (> emacs-major-version 23)        ; Emacs 24+
 
   (unless (boundp 'isearch-lax-whitespace) ; Emacs 24.1, 24.2.
-    
+
     (defvar isearch-lax-whitespace t
       "If non-nil, a space will match a sequence of whitespace chars.
 When you enter a space or spaces in ordinary incremental search, it
@@ -4568,8 +4900,7 @@ over.  To remove the highlighting, just start an incremental search:
                (icicle-read-string-completing prompt nil nil 'Info-search-history)
              (read-string prompt nil 'Info-search-history)))))
   (deactivate-mark)
-  (when (equal regexp "")
-    (setq regexp  (car Info-search-history)))
+  (when (equal regexp "") (setq regexp  (car Info-search-history)))
   (when regexp
     (prog1
         (let (found beg-found give-up
@@ -4685,6 +5016,212 @@ over.  To remove the highlighting, just start an incremental search:
                   "Use \\<Info-mode-map>`\\[Info-search] RET' to search again for `%s'.")
                  regexp)))))
 
+(defun Info-search-case-sensitively-next ()
+  "Search for next regexp from a previous `Info-search-case-sensitively'."
+  (interactive)
+  (let ((case-fold-search  Info-search-case-fold))
+    (if Info-search-history
+        (Info-search (car Info-search-history))
+      (call-interactively #'Info-search-case-sensitively))))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-next (&optional fork)       ; `n'
+  "Go to the next node of this node.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (unless (derived-mode-p 'Info-mode) (Info--pop-to-buffer-same-window "*info*"))
+  (Info-goto-node (Info-extract-pointer "next") fork))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-prev (&optional fork)       ; `p'
+  "Go to the previous node of this node.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (unless (derived-mode-p 'Info-mode) (Info--pop-to-buffer-same-window "*info*"))
+  (Info-goto-node (Info-extract-pointer "prev[ious]*" "previous") fork))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-up (&optional same-file fork) ; `u', `^'
+  "Go to the superior node of this node.
+If SAME-FILE is non-nil, do not move to a different Info file.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "i\nP")
+  (unless (derived-mode-p 'Info-mode) (Info--pop-to-buffer-same-window "*info*"))
+  (let ((old-node  Info-current-node)
+        (old-file  Info-current-file)
+        (node      (Info-extract-pointer "up"))
+        pp)
+    (when (and same-file  (string-match "^(" node)) (error "Up node is in another Info file"))
+    (Info-goto-node node fork)
+    (setq pp  (point))
+    (goto-char (point-min))
+    (cond ((and (stringp old-file)
+                (search-forward "\n* Menu:" nil t)
+                (re-search-forward
+                 (if (string-equal old-node "Top")
+                     (concat "\n\\*[^:]+: +(" (file-name-nondirectory old-file) ")")
+                   (concat "\n\\* +\\(" (regexp-quote old-node)
+                           ":\\|[^:]+: +" (regexp-quote old-node) "\\)"))
+                 nil t))
+           (beginning-of-line)
+           (if (looking-at "^\\* ") (forward-char 2)))
+          (t
+           (goto-char pp)
+           (Info-restore-point Info-history)))))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-history-back (&optional fork) ; `l'
+  "Go back in the history to the last node visited.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (unless Info-history
+    (funcall (if (fboundp 'user-error) #'user-error #'error)
+             "This is the first Info node you have visited"))
+  (let ((history-forward  (cons (list Info-current-file Info-current-node (point))
+                                Info-history-forward))
+        filename nodename opoint)
+    (setq filename      (caar Info-history)
+          nodename      (car (cdar Info-history))
+          opoint        (cadr (cdar Info-history))
+          Info-history  (cdr Info-history))
+    (when fork
+      (set-buffer (clone-buffer (concat "*info-" (if (stringp fork) fork nodename) "*") t)))
+    (Info-find-node filename nodename)
+    (setq Info-history          (cdr Info-history)
+          Info-history-forward  history-forward)
+    (goto-char opoint)))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-history-forward (&optional fork) ; `r'
+  "Go forward in the history of visited nodes.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (unless Info-history-forward
+    (funcall (if (fboundp 'user-error) #'user-error #'error)
+             "This is the last Info node you have visited"))
+  (let ((history-forward  (cdr Info-history-forward))
+        filename nodename opoint)
+    (setq filename  (caar Info-history-forward)
+          nodename  (car (cdar Info-history-forward))
+          opoint    (cadr (cdar Info-history-forward)))
+    (when fork
+      (set-buffer (clone-buffer (concat "*info-" (if (stringp fork) fork nodename) "*") t)))
+    (Info-find-node filename nodename)
+    (setq Info-history-forward  history-forward)
+    (goto-char opoint)))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-directory (&optional fork)  ; `d'
+  "Go to the Info directory node.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (when fork (set-buffer (clone-buffer nil t)))
+  (Info-find-node "dir" "top"))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-forward-node (&optional not-down not-up no-error fork) ; `]'
+  "Go forward one node, considering all nodes as forming one sequence.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "i\ni\ni\nP")
+  (goto-char (point-min))
+  (forward-line 1)
+  (let ((case-fold-search  t))
+    ;; Three possibilities, in order of priority:
+    ;;     1. Next node is in a menu in this node (but not in an index)
+    ;;     2. Next node is next at same level
+    ;;     3. Next node is up and next
+    (cond ((and (not not-down)
+                (save-excursion (search-forward "\n* menu:" nil t))
+                (not (Info-index-node)))
+           (Info-goto-node (Info-extract-menu-counting 1) fork)
+           t)
+          ((save-excursion (search-backward "next:" nil t))
+           (Info-next fork)
+           t)
+          ((and (not not-up)
+                (save-excursion (search-backward "up:" nil t))
+                ;; Use `string-equal', not `equal', to ignore text properties.
+                (not (string-equal (downcase (Info-extract-pointer "up")) "top")))
+           (let ((old-node  Info-current-node))
+             (Info-up)
+             (let ((old-history  Info-history)
+                   success)
+               (unwind-protect
+                    (setq success  (Info-forward-node t nil no-error fork))
+                 (or success  (Info-goto-node old-node fork)))
+               (and (boundp 'Info-history-skip-intermediate-nodes) ; Emacs 24+
+                    Info-history-skip-intermediate-nodes
+                    (setq Info-history  old-history)))))
+          (no-error nil)
+          (t (user-error "No pointer forward from this node")))))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;; Added optional arg FORK.
+;;
+(defun Info-backward-node (&optional fork) ; `['
+  "Go backward one node, considering all nodes as forming one sequence.
+If FORK is non-nil (interactively with a prefix arg), show the node in
+a new Info buffer.
+If FORK is a string, it is the name to use for the new buffer."
+  (interactive "P")
+  (let ((prevnode          (Info-extract-pointer "prev[ious]*" t))
+        (upnode            (Info-extract-pointer "up" t))
+        (case-fold-search  t))
+    (cond ((and upnode  (string-match "(" upnode)) (user-error "First node in file"))
+          ((and upnode  (or (null prevnode)
+                            ;; Use `string-equal', not `equal', to ignore text properties.
+                            (string-equal (downcase prevnode) (downcase upnode))))
+           (Info-up fork))
+          (prevnode
+           ;; If we move back at the same level, go down to find the last subnode*.
+           (Info-prev fork)
+           (let ((old-history  Info-history)
+                 node)
+             (while (and (not (Info-index-node))
+                         (save-excursion (search-forward "\n* Menu:" nil t)))
+               (Info-goto-node (setq node  (Info-extract-menu-counting nil))))
+;;; (when fork (Info-goto-node node fork))
+             (and (boundp 'Info-history-skip-intermediate-nodes) ; Emacs 24+
+                  Info-history-skip-intermediate-nodes
+                  (setq Info-history  old-history))))
+          (t (user-error "No pointer backward from this node")))))
+
 
 ;; REPLACES ORIGINAL in `info.el':
 ;; Added optional arg FORK.
@@ -4795,7 +5332,7 @@ in its Menu.
 User options you can customize
 ------------------------------
 `Info-fontify-quotations-flag' -
-  Fontify quoted names (‘...’ or `...') and strings (\"...\").
+  Fontify quoted names (‘...' or `...') and strings (\"...\").
   Toggle with \\[Info-toggle-fontify-quotations].
 `Info-fontify-angle-bracketed-flag' -
   Fontify angle-bracketd names (<...>).
@@ -4810,8 +5347,8 @@ Faces you can customize
 `info-file'   - Face used for file heading labels
 `info-string' - Face used for strings (e.g. \"toto\")
 `info-double-quoted-name'
-              - Face used for curly double-quoted names (e.g. “toto”)
-`info-quoted-name'  - Face used for quoted names (e.g. ‘toto’ or `toto')
+              - Face used for curly double-quoted names (e.g. "toto")
+`info-quoted-name'  - Face used for quoted names (e.g. ‘toto' or `toto')
 `info-single-quote' - Face used for isolated single-quote (e.g. 'foo)
 
 These are all of the current Info Mode bindings:
@@ -4866,6 +5403,34 @@ These are all of the current Info Mode bindings:
 
 ;; REPLACES ORIGINAL in `info.el':
 ;;
+;; Respect `Info-bookmark-use-only-node-not-file-flag'.
+;;
+;; This code and the definition of `Info-bookmark-use-only-node-not-file-flag' are also in `bookmark+-1.el',
+;; so that their feature is available if you use either `Info+' or `Bookmark+'.
+;;
+;; Note: This function name doesn't respect the naming convention for bookmark handler functions.
+;;       This name gives the impression that this is a jump command.
+;;
+;;;###autoload (autoload 'Info-bookmark-jump "info+")
+(defun Info-bookmark-jump (bookmark)
+  "Handler function for record returned by `Info-bookmark-make-record'.
+BOOKMARK is a bookmark name or a bookmark record.
+
+If `Info-bookmark-use-only-node-not-file-flag' is nil, and the
+recorded Info file is readable, then use it.  If not, then go to the
+recorded Info node in the manual for the current Emacs version."
+  (let* ((absfile    (bookmark-prop-get bookmark 'filename))
+         (file       (if (or Info-bookmark-use-only-node-not-file-flag  (not (file-readable-p absfile)))
+                         (file-name-nondirectory absfile)
+                       absfile))
+         (info-node  (bookmark-prop-get bookmark 'info-node))
+         (buf        (save-window-excursion ; Vanilla FIXME: doesn't work with frames!
+                       (Info-find-node file info-node) (current-buffer))))
+    (bookmark-default-handler `("" (buffer . ,buf) . ,(bookmark-get-bookmark-record bookmark)))))
+
+
+;; REPLACES ORIGINAL in `info.el':
+;;
 ;; Use completion for inputting the manual name, for all Emacs versions 23+.
 ;;
 ;;;###autoload (autoload 'info-display-manual "info+")
@@ -4908,10 +5473,10 @@ currently visited manuals."
           (setq found  buffer
                 blist  ()))))
     (if found
-        (switch-to-buffer found)
+        (Info--pop-to-buffer-same-window found)
       (info-initialize)
       (info (Info-find-file manual)))))
- 
+
 ;;(@* "Non-Interactive Functions")
 ;;; Non-Interactive  Functions ---------------------------------------
 
@@ -4928,17 +5493,18 @@ currently visited manuals."
 (defun Info-node-name-at-point ()
   "Return the Info node named at point, or nil if none."
   (save-match-data
-    (let ((name  (cond ((Info-get-token (point) "\\*note[ \n\t]+" "\\*note[ \n\t]+\\([^:]*\\):\\(:\\|[ \n\t]*(\\)?"))
-                       ((Info-get-token (point) "\\* +" "\\* +\\([^:]*\\)::")) ; Menu item: node name
-                       ((Info-get-token (point) "\\* +" "\\* +\\(.*\\): ") ; menu item: node name or index entry
-                        (beginning-of-line)
-                        (forward-char 2)
-                        (Info-extract-menu-node-name nil (Info-index-node)))
-                       ((Info-get-token (point) "Up: " "Up: \\([^,\n\t]*\\)"))
-                       ((Info-get-token (point) "Next: " "Next: \\([^,\n\t]*\\)"))
-                       ((Info-get-token (point) "File: " "File: \\([^,\n\t]*\\)"))
-                       ((Info-get-token (point) "Prev: " "Prev: \\([^,\n\t]*\\)")))))
-      (and name  (replace-regexp-in-string "[\n]+" " " name)))))
+    (let ((name
+           (cond ((Info-get-token (point) "\\*note[ \n\t]+" "\\*note[ \n\t]+\\([^:]*\\):\\(:\\|[ \n\t]*(\\)?"))
+                 ((Info-get-token (point) "\\* +" "\\* +\\([^:]*\\)::")) ; Menu item: node name
+                 ((Info-get-token (point) "\\* +" "\\* +\\(.*\\): ") ; menu item: node name or index entry
+                  (beginning-of-line)
+                  (forward-char 2)
+                  (Info-extract-menu-node-name nil (Info-index-node)))
+                 ((Info-get-token (point) "Up: " "Up: \\([^,\n\t]*\\)"))
+                 ((Info-get-token (point) "Next: " "Next: \\([^,\n\t]*\\)"))
+                 ((Info-get-token (point) "File: " "File: \\([^,\n\t]*\\)"))
+                 ((Info-get-token (point) "Prev: " "Prev: \\([^,\n\t]*\\)")))))
+      (and name  (replace-regexp-in-string "\n+" " " name)))))
 
 (when (require 'bookmark+ nil t)
 
@@ -4947,7 +5513,7 @@ currently visited manuals."
 Non-nil NODE can have the form `NODE' or `(MANUAL) NODE'.
 If NODE is nil then read the node name.  If optional arg LOCALP is
 non-nil then read the node name only from the current manual."
-    (when (and node  (stringp Info-current-file)  (not (bmkp-string-match-p "(\\([^)]+\\)) \\([^)]*\\)" node)))
+    (when (and node  (stringp Info-current-file)  (not (string-match-p "(\\([^)]+\\)) \\([^)]*\\)" node)))
       (setq node  (concat "(" (file-name-sans-extension (file-name-nondirectory Info-current-file)) ") " node)))
     (unless node (setq node  (Info-read-bookmarked-node-name localp)))
     (bmkp-get-bookmark-in-alist node t (bmkp-info-alist-only)))
@@ -5018,6 +5584,10 @@ See `Info-bookmark-name-for-node' for the form of the bookmark name."
           (when Info-fontify-visited-nodes (Info-fontify-node))))))
 
   )
+
+(if (fboundp 'pop-to-buffer-same-window)
+    (defalias 'Info--pop-to-buffer-same-window 'pop-to-buffer-same-window)
+  (defalias 'Info--pop-to-buffer-same-window 'switch-to-buffer))
 
 ;;; ;; Not currently used.
 ;;; (defun Info-display-node-time-header ()
