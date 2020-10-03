@@ -1,0 +1,1 @@
+Mirror of https://www.emacswiki.org/emacs/download/info%2b.el
