@@ -40,7 +40,7 @@
 ;;
 ;;  If you use Emacs 20, 21, or 22 then use library `info+20.el'
 ;;  instead of `info+.el'.
-
+
 ;;(@> "Index")
 ;;
 ;;  Index
@@ -62,7 +62,7 @@
 ;;  (@> "New Commands")
 ;;  (@> "Replacements for Existing Functions")
 ;;  (@> "Non-Interactive Functions")
-
+
 ;;(@* "Things Defined Here")
 ;;
 ;;  Things Defined Here
@@ -175,8 +175,8 @@
 ;;     5. Only 5th and 9th menu items have their `*' colored.
 ;;     6. Notes in face `info-xref'.
 ;;     7. If `Info-fontify-emphasis-flag', then fontify _..._.
-;;     8. If `Info-fontify-quotations-flag', then fontify ‘...' or
-;;        `...' in face `info-quoted-name', "..." in face
+;;     8. If `Info-fontify-quotations-flag', then fontify ‘...’ or
+;;        `...' in face `info-quoted-name', “...” in face
 ;;        `info-double-quoted-name',  and "..." in face `info-string'.
 ;;     9. If `Info-fontify-angle-bracketed-flag' and
 ;;        `Info-fontify-quotations-flag' then fontify <...> in face
@@ -220,7 +220,7 @@
 ;;              has been REDEFINED HERE:
 ;;
 ;;  `outline-invisible-p' - Fixes Emacs bug #28080.
-
+
 ;;(@* "Documentation")
 ;;
 ;;  Documentation
@@ -358,7 +358,7 @@
 ;;
 ;;    - In the mode line.  Turned on by default.
 ;;
-;;      See ‘Toggle Breadcrumbs' in the `mouse-3' mode-line menu and
+;;      See ‘Toggle Breadcrumbs’ in the `mouse-3' mode-line menu and
 ;;      `Toggle Breadcrumbs in Mode Line' in the `Info' menu (in the
 ;;      menu-bar or in the minor-mode indicator). You can customize
 ;;      option `Info-breadcrumbs-in-mode-line-mode' if you want to
@@ -380,7 +380,7 @@
 ;;
 ;;  * Additional commands, including:
 ;;
-;;    - `Info-virtual-book' (bound to `v') - Open a virtual Info
+;;    - `Info-virtual-book' (bound to `v') – Open a virtual Info
 ;;      manual of saved nodes from any number of manuals.  The nodes
 ;;      are those saved in option `Info-virtual-book'.  With `C-u',
 ;;      bookmarked Info nodes are also included.  (If you use Icicles,
@@ -406,11 +406,11 @@
 ;;      visited.  No prefix arg: toggle.  Non-negative prefix arg: set
 ;;      to visited.  Negative prefix arg: set to unvisited.
 ;;
-;;    - `Info-save-current-node' (bound to `.') - Save the name of the
+;;    - `Info-save-current-node' (bound to `.') – Save the name of the
 ;;      current node to list `Info-saved-nodes', for use by `v'
 ;;      (`Info-virtual-book').
 ;;
-;;    - `Info-merge-subnodes' - Integrate the current Info node with
+;;    - `Info-merge-subnodes' – Integrate the current Info node with
 ;;      its subnodes (the nodes in its Menu), perhaps recursively.
 ;;
 ;;      Use `Info-merge-subnodes' to extract a self-contained report
@@ -616,9 +616,9 @@
 ;;     info-double-quoted-name: Changed default colors.
 ;; 2015/09/13 dadams
 ;;     Added face info-double-quoted-name.
-;;     info-quotation-regexp, info-quoted+<>-regexp: Added pattern for curly double-quotes ("...").
+;;     info-quotation-regexp, info-quoted+<>-regexp: Added pattern for curly double-quotes (“...”).
 ;;                                                   Use shy groups for all parts.
-;;     info-fontify-quotations: Fontify text between curly double-quotes ("...").
+;;     info-fontify-quotations: Fontify text between curly double-quotes (“...”).
 ;; 2015/03/19 dadams
 ;;     info-quoted+<>-regexp: Highlight <...> only if the first char is alphabetic.
 ;; 2015/03/06 dadams
@@ -637,7 +637,7 @@
 ;;     Info-merge-subnodes: with-current-buffer, not save-excursion + set-buffer.
 ;; 2014/05/04 dadams
 ;;     REMOVED SUPPORT for Emacs 20-22.  That support is offered by a new library now: info+20.el.
-;;     Added coding:utf-8 declaration.  Replace \x2018, \x2019 with literal ‘ and ', since now Emacs 23+.
+;;     Added coding:utf-8 declaration.  Replace \x2018, \x2019 with literal ‘ and ’, since now Emacs 23+.
 ;; 2014/05/03 dadams
 ;;     info-quotation-regexp, info-quoted+<>-regexp: Handle also curly single quotes (Emacs 24.4+).
 ;;                                                   Removed double * and moved openers outside \(...\) group.
@@ -1046,7 +1046,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;
 
-
+
 ;;(@* "Macros")
 ;;; Macros -----------------------------------------------------------
 
@@ -1073,7 +1073,7 @@
 (define-key Info-mode-map [S-return]        'Info-follow-nearest-node-new-window)
 (define-key Info-mode-map [mouse-4]         'Info-history-back)
 (define-key Info-mode-map [mouse-5]         'Info-history-forward)
-
+
 ;;(@* "Faces (Customizable)")
 ;;; Faces (Customizable) ---------------------------------------------
 
@@ -1095,10 +1095,10 @@ Don't forget to mention your Emacs and library versions."))
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `red3' for this face.
 ;;;###autoload
-(defface info-double-quoted-name        ; For "..."
+(defface info-double-quoted-name        ; For “...”
     '((((background dark)) (:inherit font-lock-string-face :foreground "Cyan"))
       (t (:inherit font-lock-string-face :foreground "DarkOrange")))
-  "*Face for names enclosed in curly double-quotes (\"...\") in `info'."
+  "*Face for names enclosed in curly double-quotes (\“...\”) in `info'."
   :group 'Info-Plus :group 'faces)
 
 ;;;###autoload
@@ -1121,11 +1121,11 @@ Don't forget to mention your Emacs and library versions."))
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `yellow' for this face.
 ;;;###autoload
-(defface info-quoted-name               ; For ‘...' and `...'
+(defface info-quoted-name               ; For ‘...’ and `...'
     '((((background dark)) (:inherit font-lock-string-face :foreground "#6B6BFFFF2C2C")) ; ~ bright green
       (((background light)) (:inherit font-lock-string-face :foreground "DarkViolet"))
       (t (:foreground "yellow")))
-  "*Face for quoted names (‘...' or `...') in `info'."
+  "*Face for quoted names (‘...’ or `...') in `info'."
   :group 'Info-Plus :group 'faces)
 
 ;; FWIW, I use a `LightSteelBlue' background for `*info*', and I use `red3' for this face.
@@ -1241,7 +1241,7 @@ Don't forget to mention your Emacs and library versions."))
     :group 'Info-Plus :group 'faces)
 
   )
-
+
 ;;(@* "User Options (Customizable)")
 ;;; User Options (Customizable) --------------------------------------
 
@@ -1413,8 +1413,8 @@ way to turn off all matching of `Info-emphasis-regexp'."
 ;;;###autoload
 (defcustom Info-fontify-quotations-flag t
   "*Non-nil means `info' fontifies text between quotes.
-This applies to double-quoted text (\"...\" or \\\"...\\\") and text
-between single-quotes (‘...' or `...').
+This applies to double-quoted text (\“...\” or \\\"...\\\") and text
+between single-quotes (‘...’ or `...').
 
 Note: This fontification can never be 100% reliable.  It aims to be
 useful in most Info texts, but it can occasionally result in
@@ -1478,10 +1478,10 @@ For example, type `^Q^L^Q^J* ' to set this to \"\\f\\n* \"."
 ;;;###autoload
 (defcustom Info-toc-outline-no-redundancy-flag t
   "Non-nil means `Info-toc-outline' TOC has no redundancy.
-If nil then section headings from the TOC manual are included, and
+If nil then section headings from the TOC manual are included, and 
 nodes can be repeated because they are in more than one section."
   :type 'boolean :group 'Info-Plus)
-
+
 
 ;;(@* "Internal Variables")
 ;;; Internal Variables -----------------------------------------------
@@ -1514,24 +1514,24 @@ If nil then emphasis is never fontified, regardless of that flag.")
 (defvar Info-breadcrumbs-depth-internal Info-breadcrumbs-depth
   "Current breadcrumbs depth for Info.")
 
-;; Match has, inside "...", "...", ‘...', or `...', zero or more of these characters:
-;;   - any character except ", ", ', or ', respectively
+;; Match has, inside “...”, "...", ‘...’, or `...', zero or more of these characters:
+;;   - any character except ”, ", ’, or ', respectively
 ;;   - \ followed by any character
 ;;
 ;; The `... in `...' is optional, so the regexp can also match just '.
 ;;
-;; The regexp matches also ‘...', `...', "...", and "..." where at least one of the
-;; ‘, ', `, ', ", ", or " is escaped by a backslash.
+;; The regexp matches also ‘...’, `...', “...”, and "..." where at least one of the
+;; ‘, ’, `, ', “, ”, or " is escaped by a backslash.
 ;; So we check those cases explicitly and do not highlight them.
 ;;
 (defvar info-quotation-regexp
   (concat
    "\"\\(?:[^\"\\]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|" ; "..."
    "`\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"      ; `...'
-   "‘\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"      ; ‘...'
-   ""\\(?:[^"]\\|\\\\\\(?:.\\|\n\\)\\)*""         ; "..."
+   "‘\\(?:[^’]\\|\\\\\\(?:.\\|\n\\)\\)*’\\|"      ; ‘...’
+   "“\\(?:[^”]\\|\\\\\\(?:.\\|\n\\)\\)*”"         ; “...”
    )
-  "Regexp to match `...', ‘...', \"...\", \\\"...\\\", or just '.
+  "Regexp to match `...', ‘...’, \“...\”, \\\"...\\\", or just '.
 If ... contains an end char then that char must be backslashed.")
 
 ;; (rx (or (seq ?\"
@@ -1541,18 +1541,18 @@ If ... contains an end char then that char must be backslashed.")
 ;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
 ;;              ?\')
 ;;         (seq ?‘
-;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
-;;              ?')
-;;         (seq ?"
-;;              (zero-or-more (or (not (any ?"))  (seq ?\\ anything)))
-;;              ?")))
+;;              (zero-or-more (or (not (any ?’))  (seq ?\\ anything)))
+;;              ?’)
+;;         (seq ?“
+;;              (zero-or-more (or (not (any ?”))  (seq ?\\ anything)))
+;;              ?”)))
 
 (defvar info-quoted+<>-regexp
   (concat
    "\"\\(?:[^\"\\]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|"             ; "..."
    "`\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"                  ; `...'
-   "‘\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"                  ; ‘...'
-   "\"\\(?:[^\"]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|"               ; "..."
+   "‘\\(?:[^’]\\|\\\\\\(?:.\\|\n\\)\\)*’\\|"                  ; ‘...’
+   "\“\\(?:[^\”]\\|\\\\\\(?:.\\|\n\\)\\)*\”\\|"               ; “...”
    "<\\(?:[[:alpha:]][^>]*\\|\\(?:\\\\\\(?:.\\|\n\\)\\)*\\)>" ; <...>
    )
   "Same as `info-quotation-regexp', but matches also <...>.
@@ -1565,11 +1565,11 @@ If ... contains an end char then that char must be backslashed.")
 ;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
 ;;              ?\')
 ;;         (seq ?‘
-;;              (zero-or-more (or (not (any ?'))  (seq ?\\ anything)))
-;;              ?')
-;;         (seq ?"
-;;              (zero-or-more (or (not (any ?"))  (seq ?\\ anything)))
-;;              ?")
+;;              (zero-or-more (or (not (any ?’))  (seq ?\\ anything)))
+;;              ?’)
+;;         (seq ?“
+;;              (zero-or-more (or (not (any ?”))  (seq ?\\ anything)))
+;;              ?”)
 ;;         (seq ?<
 ;;              (or (seq (any alpha) (zero-or-more (not (any ?>))))
 ;;                  (zero-or-more (seq ?\\ anything)))
@@ -1577,7 +1577,7 @@ If ... contains an end char then that char must be backslashed.")
 
 (defvar Info-toc-outline-map (let ((map  (make-sparse-keymap))) (set-keymap-parent map Info-mode-map))
   "Keymap for Info TOC with outlining.")
-
+
 ;;(@* "New Commands")
 ;;; New Commands -----------------------------------------------------
 
@@ -1696,7 +1696,7 @@ A negative prefix arg means consider the nodes not visited."
     ;; Emacs 23 has brain-dead `kill-buffer', which is invoked by `revert-buffer' and deletes
     ;; the window/frame if dedicated.
     (when (and (> emacs-major-version 23)  (derived-mode-p 'Info-mode)) (revert-buffer nil t))
-    (when msgp (message "Node %sis now unvisited"
+    (when msgp (message "Node %sis now unvisited" 
                         (if (string= "dir" Info-current-file) ""
                           (format "`%s%s' "
                                   (if (equal file Info-current-file)
@@ -2553,23 +2553,23 @@ manual.  Empty NODE in (MANUAL) defaults to the `Top' node."
 ;;    below.
 ;;
 ;; 3. Multiple consecutive space, tab and newline characters are
-;;    transformed into just one space. (It's not possible to have
+;;    transformed into just one space. (It’s not possible to have
 ;;    newlines in node names with the current implementation, but we
 ;;    specify it anyway, just in case.)
 ;;
 ;; 4. Leading and trailing spaces are removed.
 ;;
 ;; 5. After the above has been applied, each remaining space character is
-;;    converted into a ‘-' character.
+;;    converted into a ‘-’ character.
 ;;
-;; 6. Other ASCII 7-bit characters are transformed into ‘_00xx', where xx
+;; 6. Other ASCII 7-bit characters are transformed into ‘_00xx’, where xx
 ;;    is the ASCII character code in (lowercase) hexadecimal. This includes
-;;    ‘_', which is mapped to ‘_005f'.
+;;    ‘_’, which is mapped to ‘_005f’.
 ;;
 ;; 7. If the node name does not begin with a letter, the literal string
-;;    ‘g_t' is prefixed to the result. (Due to the rules above, that
+;;    ‘g_t’ is prefixed to the result. (Due to the rules above, that
 ;;    string can never occur otherwise; it is an arbitrary choice,
-;;    standing for "GNU Texinfo".) This is necessary because XHTML
+;;    standing for “GNU Texinfo”.) This is necessary because XHTML
 ;;    requires that identifiers begin with a letter.
 ;;
 ;;;###autoload (autoload 'Info-url-for-node "info+")
@@ -2622,7 +2622,7 @@ candidates."
     (info "emacs")))
 
 (global-set-key [remap info-emacs-manual] 'info-manual) ; `C-h r'
-
+    
 
 
 (easy-menu-define
@@ -2669,7 +2669,7 @@ candidates."
      ["Previous" Info-prev :active (Info-check-pointer "prev[ious]*") :help "Go to the previous node"]
      ["Go to Node..." Info-goto-node :help "Go to a named node"]
      ["Go to Node on Web..." Info-goto-node-web :help "Go to a named node on the Web (HTML doc)"]
-
+   
      "--"
      ["Forward" Info-forward-node :help "Go forward one node, considering all as a sequence"]
      ["Backward" Info-backward-node :help "Go backward one node, considering all as a sequence"]
@@ -2680,7 +2680,7 @@ candidates."
      ["Highlighting _..._ (emphasis)" Info-toggle-fontify-emphasis
       :visible info-fontify-emphasis :style toggle :selected Info-fontify-emphasis-flag
       :help "Toggle option `Info-fontify-emphasis-flag'"]
-     ["Highlighting ‘...' or `...', and \"...\"" Info-toggle-fontify-quotations
+     ["Highlighting ‘...’ or `...', and \"...\"" Info-toggle-fontify-quotations
       :style toggle :selected Info-fontify-quotations-flag :help "Toggle option `Info-fontify-quotations-flag'"]
      ["Highlighting <...>" Info-toggle-fontify-angle-bracketed
       :style toggle :selected Info-fontify-angle-bracketed-flag
@@ -2714,7 +2714,7 @@ candidates."
     ["Merge Subnodes" Info-merge-subnodes :help "Integrate current node with nodes referred to in its Menu"]
     "--"
     ["Quit Info" Info-exit :help "Exit from Info"]))
-
+
 ;;(@* "Replacements for Existing Functions")
 ;;; Replacements for Existing Functions -------------------------------
 
@@ -2800,7 +2800,7 @@ two (or more) of those words."
       (unless (eq major-mode 'Info-mode) (pop-to-buffer "*info*"))
       (if nodes
           (Info-find-node Info-apropos-file (caar nodes))
-        (setq nodename  (format "Index for ‘%s'" apropos-regexp))
+        (setq nodename  (format "Index for ‘%s’" apropos-regexp))
         (push (list nodename
                     apropos-regexp
                     (Info-apropos-matches apropos-regexp (and (not literalp) 'REGEXP)))
@@ -3589,8 +3589,8 @@ If key's command cannot be found by looking in indexes, then
 ;; REPLACES ORIGINAL in `info.el':
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
-;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
+;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -3689,7 +3689,7 @@ If key's command cannot be found by looking in indexes, then
                      (skip-chars-backward " \t,")
                      (put-text-property (point) header-end 'invisible t))))))
 
-        ;; Fontify ‘...', `...', "...", and "..."
+        ;; Fontify ‘...’, `...', “...”, and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -3963,8 +3963,8 @@ If key's command cannot be found by looking in indexes, then
 ;;
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
-;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
+;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -4064,7 +4064,7 @@ If key's command cannot be found by looking in indexes, then
                      (skip-chars-backward " \t,")
                      (put-text-property (point) header-end 'invisible t))))))
 
-        ;; Fontify ‘...', `...', "...", and "..."
+        ;; Fontify ‘...’, `...', “...”, and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -4320,8 +4320,8 @@ If key's command cannot be found by looking in indexes, then
 ;;
 ;; 1. File name in face `info-file'.
 ;; 2. If `Info-fontify-emphasis-flag', fontify _..._.
-;; 3. If `Info-fontify-quotations-flag', fontify ‘...' or `...' in face `info-quoted-name',
-;;    "..." in face `info-double-quoted-name', and "..." in face `info-string'.
+;; 3. If `Info-fontify-quotations-flag', fontify ‘...’ or `...' in face `info-quoted-name',
+;;    “...” in face `info-double-quoted-name', and "..." in face `info-string'.
 ;; 4. If `Info-fontify-quotations-flag' and `Info-fontify-single-quote-flag' then
 ;;    fontify ' in face `info-single-quote'.
 ;; 5. If `Info-fontify-quotations-flag' and `Info-fontify-angle-bracketed-flag' then
@@ -4428,7 +4428,7 @@ If key's command cannot be found by looking in indexes, then
                                             header-end t)
                          (put-text-property (match-beginning 1) (match-end 1) 'invisible t)))))))
 
-        ;; Fontify ‘...', `...', "...", and "..."
+        ;; Fontify ‘...’, `...', “...”, and "..."
         (goto-char (point-min))
         (when Info-fontify-quotations-flag (info-fontify-quotations))
 
@@ -4702,12 +4702,12 @@ You are prompted for the depth value."
   (when Info-breadcrumbs-in-mode-line-mode (Info-insert-breadcrumbs-in-mode-line)))
 
 (defun info-fontify-quotations ()
-  "Fontify ‘...', `...', "...", \"...\", and possibly <...> and single '.
+  "Fontify ‘...’, `...', “...”, \"...\", and possibly <...> and single '.
 If `Info-fontify-angle-bracketed-flag' then fontify <...> also.
 If `Info-fontify-single-quote-flag' then fontify singleton ' also.
 
- ‘...', `...', and <...>\t- use face `info-quoted-name'.
- "..." uses face `info-double-quoted-name'.
+ ‘...’, `...', and <...>\t- use face `info-quoted-name'.
+ “...” uses face `info-double-quoted-name'.
  \"...\"\t- uses face `info-string'.
  '\t- uses face `info-single-quote'."
   (let ((regexp    (if Info-fontify-angle-bracketed-flag info-quoted+<>-regexp info-quotation-regexp))
@@ -4719,11 +4719,11 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)))
             ((and (eq (aref (match-string 0) 0) ?‘) ; Single-quote wrapped backslashes:
-                  (goto-char (match-beginning 0)) ; ‘\', ‘\\', ‘\\\', etc.
-                  (save-match-data (looking-at "\\(‘\\\\+'\\)")))
+                  (goto-char (match-beginning 0)) ; ‘\’, ‘\\’, ‘\\\’, etc. 
+                  (save-match-data (looking-at "\\(‘\\\\+’\\)")))
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)))
-            ((and (memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...', `...'
+            ((and (memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...’, `...'
                   (goto-char (match-beginning 0)) ; If ` or ‘ is preceded by \, then skip it
                   (< (save-excursion (skip-chars-backward "\\\\")) 0))
              (goto-char (1+ (match-beginning 0))))
@@ -4732,14 +4732,14 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
                   (goto-char (match-beginning 0))
                   (< (save-excursion (skip-chars-backward "\\\\")) 0))
              (goto-char (1+ (match-beginning 0))))
-            ((memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...', `...'
+            ((memq (aref (match-string 0) 0) '(?` ?‘)) ; ‘...’, `...'
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
             ((and Info-fontify-angle-bracketed-flag
                   (eq ?< (aref (match-string 0) 0))) ; <...>
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
-            ((eq (aref (match-string 0) 0) ?") ; "..."
+            ((eq (aref (match-string 0) 0) ?“) ; “...”
              (put-text-property (1+ (match-beginning 0)) (1- (match-end 0)) property 'info-double-quoted-name)
              (goto-char (match-end 0)) (forward-char 1))
             ;; Don't try to handle strings correctly.  Check only the first " for being escaped.
@@ -4753,7 +4753,7 @@ If `Info-fontify-single-quote-flag' then fontify singleton ' also.
                                 property 'info-single-quote)
              (goto-char (match-end 0)) (forward-char 1))
             ((and (not (string= "'" (buffer-substring (match-beginning 0) (match-end 0)))) ; "..."
-                  (not (string= "'" (buffer-substring (match-beginning 0) (match-end 0)))))
+                  (not (string= "’" (buffer-substring (match-beginning 0) (match-end 0)))))
              (put-text-property (match-beginning 0) (match-end 0) property 'info-string)
              (goto-char (match-end 0)) (forward-char 1))
             (t
@@ -4841,7 +4841,7 @@ Syntax class:\\|User Option:\\|Variable:\\)\\(.*\\)\\(\n          \\(.*\\)\\)*"
 (when (> emacs-major-version 23)        ; Emacs 24+
 
   (unless (boundp 'isearch-lax-whitespace) ; Emacs 24.1, 24.2.
-
+    
     (defvar isearch-lax-whitespace t
       "If non-nil, a space will match a sequence of whitespace chars.
 When you enter a space or spaces in ordinary incremental search, it
@@ -5132,7 +5132,7 @@ If FORK is non-nil (interactively with a prefix arg), show the node in
 a new Info buffer.
 If FORK is a string, it is the name to use for the new buffer."
   (interactive "P")
-  (unless Info-history-forward
+  (unless Info-history-forward 
     (funcall (if (fboundp 'user-error) #'user-error #'error)
              "This is the last Info node you have visited"))
   (let ((history-forward  (cdr Info-history-forward))
@@ -5343,7 +5343,7 @@ in its Menu.
 User options you can customize
 ------------------------------
 `Info-fontify-quotations-flag' -
-  Fontify quoted names (‘...' or `...') and strings (\"...\").
+  Fontify quoted names (‘...’ or `...') and strings (\"...\").
   Toggle with \\[Info-toggle-fontify-quotations].
 `Info-fontify-angle-bracketed-flag' -
   Fontify angle-bracketd names (<...>).
@@ -5358,8 +5358,8 @@ Faces you can customize
 `info-file'   - Face used for file heading labels
 `info-string' - Face used for strings (e.g. \"toto\")
 `info-double-quoted-name'
-              - Face used for curly double-quoted names (e.g. "toto")
-`info-quoted-name'  - Face used for quoted names (e.g. ‘toto' or `toto')
+              - Face used for curly double-quoted names (e.g. “toto”)
+`info-quoted-name'  - Face used for quoted names (e.g. ‘toto’ or `toto')
 `info-single-quote' - Face used for isolated single-quote (e.g. 'foo)
 
 These are all of the current Info Mode bindings:
@@ -5487,7 +5487,7 @@ currently visited manuals."
         (Info--pop-to-buffer-same-window found)
       (info-initialize)
       (info (Info-find-file manual)))))
-
+
 ;;(@* "Non-Interactive Functions")
 ;;; Non-Interactive  Functions ---------------------------------------
 
