@@ -8,9 +8,9 @@
 ;; Created: Tue Sep 12 16:30:11 1995
 ;; Version: 0
 ;; Package-Requires: ()
-;; Last-Updated: Sat Oct  3 14:00:25 2020 (-0700)
+;; Last-Updated: Fri Oct  9 14:03:04 2020 (-0700)
 ;;           By: dradams
-;;     Update #: 6527
+;;     Update #: 6532
 ;; URL: https://www.emacswiki.org/emacs/download/info%2b.el
 ;; Doc URL: https://www.emacswiki.org/emacs/InfoPlus
 ;; Keywords: help, docs, internal
@@ -40,7 +40,7 @@
 ;;
 ;;  If you use Emacs 20, 21, or 22 then use library `info+20.el'
 ;;  instead of `info+.el'.
-
+ 
 ;;(@> "Index")
 ;;
 ;;  Index
@@ -62,7 +62,7 @@
 ;;  (@> "New Commands")
 ;;  (@> "Replacements for Existing Functions")
 ;;  (@> "Non-Interactive Functions")
-
+ 
 ;;(@* "Things Defined Here")
 ;;
 ;;  Things Defined Here
@@ -220,7 +220,7 @@
 ;;              has been REDEFINED HERE:
 ;;
 ;;  `outline-invisible-p' - Fixes Emacs bug #28080.
-
+ 
 ;;(@* "Documentation")
 ;;
 ;;  Documentation
@@ -489,12 +489,10 @@
 ;;
 ;;; Change Log:
 ;;
-;; 2020/10/03 dadams
+;; 2020/10/09 dadams
 ;;     Info-read-bookmarked-node-name: remove-if-not -> bmkp-remove-if-not.
 ;;     Everywhere: added nil second arg to looking-back (arg is required now).
 ;;     Added more defvars to quiet byte-compiler, for Emacs 27+.
-;;     info-double-quoted-name, Info-fontify-quotations-flag, info-quotation-regexp, info-quoted+<>-regexp:
-;;       Escape " chars in doc string.  Thx to noosphere.
 ;; 2020/09/26 dadams
 ;;     Info-goto-emacs-key-command-node: If this-file is nil then return nil.
 ;; 2020/08/30 dadams
@@ -1046,7 +1044,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;
 
-
+ 
 ;;(@* "Macros")
 ;;; Macros -----------------------------------------------------------
 
@@ -1073,7 +1071,7 @@
 (define-key Info-mode-map [S-return]        'Info-follow-nearest-node-new-window)
 (define-key Info-mode-map [mouse-4]         'Info-history-back)
 (define-key Info-mode-map [mouse-5]         'Info-history-forward)
-
+ 
 ;;(@* "Faces (Customizable)")
 ;;; Faces (Customizable) ---------------------------------------------
 
@@ -1098,7 +1096,7 @@ Don't forget to mention your Emacs and library versions."))
 (defface info-double-quoted-name        ; For “...”
     '((((background dark)) (:inherit font-lock-string-face :foreground "Cyan"))
       (t (:inherit font-lock-string-face :foreground "DarkOrange")))
-  "*Face for names enclosed in curly double-quotes (\“...\”) in `info'."
+  "*Face for names enclosed in curly double-quotes (“...”) in `info'."
   :group 'Info-Plus :group 'faces)
 
 ;;;###autoload
@@ -1241,7 +1239,7 @@ Don't forget to mention your Emacs and library versions."))
     :group 'Info-Plus :group 'faces)
 
   )
-
+ 
 ;;(@* "User Options (Customizable)")
 ;;; User Options (Customizable) --------------------------------------
 
@@ -1413,7 +1411,7 @@ way to turn off all matching of `Info-emphasis-regexp'."
 ;;;###autoload
 (defcustom Info-fontify-quotations-flag t
   "*Non-nil means `info' fontifies text between quotes.
-This applies to double-quoted text (\“...\” or \\\"...\\\") and text
+This applies to double-quoted text (“...” or \"...\") and text
 between single-quotes (‘...’ or `...').
 
 Note: This fontification can never be 100% reliable.  It aims to be
@@ -1481,7 +1479,7 @@ For example, type `^Q^L^Q^J* ' to set this to \"\\f\\n* \"."
 If nil then section headings from the TOC manual are included, and 
 nodes can be repeated because they are in more than one section."
   :type 'boolean :group 'Info-Plus)
-
+ 
 
 ;;(@* "Internal Variables")
 ;;; Internal Variables -----------------------------------------------
@@ -1531,7 +1529,7 @@ If nil then emphasis is never fontified, regardless of that flag.")
    "‘\\(?:[^’]\\|\\\\\\(?:.\\|\n\\)\\)*’\\|"      ; ‘...’
    "“\\(?:[^”]\\|\\\\\\(?:.\\|\n\\)\\)*”"         ; “...”
    )
-  "Regexp to match `...', ‘...’, \“...\”, \\\"...\\\", or just '.
+  "Regexp to match `...', ‘...’, “...”, \"...\", or just '.
 If ... contains an end char then that char must be backslashed.")
 
 ;; (rx (or (seq ?\"
@@ -1552,7 +1550,7 @@ If ... contains an end char then that char must be backslashed.")
    "\"\\(?:[^\"\\]\\|\\\\\\(?:.\\|\n\\)\\)*\"\\|"             ; "..."
    "`\\(?:[^']\\|\\\\\\(?:.\\|\n\\)\\)*'\\|"                  ; `...'
    "‘\\(?:[^’]\\|\\\\\\(?:.\\|\n\\)\\)*’\\|"                  ; ‘...’
-   "\“\\(?:[^\”]\\|\\\\\\(?:.\\|\n\\)\\)*\”\\|"               ; “...”
+   "“\\(?:[^”]\\|\\\\\\(?:.\\|\n\\)\\)*”\\|"                  ; “...”
    "<\\(?:[[:alpha:]][^>]*\\|\\(?:\\\\\\(?:.\\|\n\\)\\)*\\)>" ; <...>
    )
   "Same as `info-quotation-regexp', but matches also <...>.
@@ -1577,7 +1575,7 @@ If ... contains an end char then that char must be backslashed.")
 
 (defvar Info-toc-outline-map (let ((map  (make-sparse-keymap))) (set-keymap-parent map Info-mode-map))
   "Keymap for Info TOC with outlining.")
-
+ 
 ;;(@* "New Commands")
 ;;; New Commands -----------------------------------------------------
 
@@ -2714,7 +2712,7 @@ candidates."
     ["Merge Subnodes" Info-merge-subnodes :help "Integrate current node with nodes referred to in its Menu"]
     "--"
     ["Quit Info" Info-exit :help "Exit from Info"]))
-
+ 
 ;;(@* "Replacements for Existing Functions")
 ;;; Replacements for Existing Functions -------------------------------
 
@@ -5487,7 +5485,7 @@ currently visited manuals."
         (Info--pop-to-buffer-same-window found)
       (info-initialize)
       (info (Info-find-file manual)))))
-
+ 
 ;;(@* "Non-Interactive Functions")
 ;;; Non-Interactive  Functions ---------------------------------------
 
